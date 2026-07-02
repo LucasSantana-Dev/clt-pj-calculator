@@ -1,6 +1,7 @@
 import type { Dispatch, SetStateAction } from 'react'
 import type { Area, Experiencia, Modalidade, Senioridade, Uf } from '../engine/benchmark'
 import { AREAS, EXPERIENCIAS, MODALIDADES, SENIORIDADES, UFS } from './opcoes'
+import { Select } from './Select'
 
 export type Direcao = 'clt-para-pj' | 'pj-para-clt'
 
@@ -91,68 +92,41 @@ export function Formulario({ entradas, aoMudar }: Props) {
       />
 
       <div className="grade-perfil">
-        <label className="campo" htmlFor="senioridade">
-          <span className="campo-rotulo">Senioridade</span>
-          <select
+        <div className="campo">
+          <label className="campo-rotulo" htmlFor="senioridade">Senioridade</label>
+          <Select
             id="senioridade"
-            value={entradas.senioridade}
-            onChange={(e) => muda('senioridade', e.target.value as Senioridade)}
-          >
-            {SENIORIDADES.map((o) => (
-              <option key={o.valor} value={o.valor}>
-                {o.rotulo}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="campo" htmlFor="area">
-          <span className="campo-rotulo">Área</span>
-          <select id="area" value={entradas.area} onChange={(e) => muda('area', e.target.value as Area)}>
-            {AREAS.map((o) => (
-              <option key={o.valor} value={o.valor}>
-                {o.rotulo}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="campo" htmlFor="uf">
-          <span className="campo-rotulo">Estado</span>
-          <select id="uf" value={entradas.uf} onChange={(e) => muda('uf', e.target.value as Uf)}>
-            {UFS.map((o) => (
-              <option key={o.valor} value={o.valor}>
-                {o.rotulo}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="campo" htmlFor="experiencia">
-          <span className="campo-rotulo">Tempo de experiência</span>
-          <select
+            valor={entradas.senioridade}
+            opcoes={SENIORIDADES}
+            aoMudar={(v: Senioridade) => muda('senioridade', v)}
+          />
+        </div>
+        <div className="campo">
+          <label className="campo-rotulo" htmlFor="area">Área</label>
+          <Select id="area" valor={entradas.area} opcoes={AREAS} aoMudar={(v: Area) => muda('area', v)} />
+        </div>
+        <div className="campo">
+          <label className="campo-rotulo" htmlFor="uf">Estado</label>
+          <Select id="uf" valor={entradas.uf} opcoes={UFS} aoMudar={(v: Uf) => muda('uf', v)} />
+        </div>
+        <div className="campo">
+          <label className="campo-rotulo" htmlFor="experiencia">Tempo de experiência</label>
+          <Select
             id="experiencia"
-            value={entradas.experiencia}
-            onChange={(e) => muda('experiencia', e.target.value as Experiencia)}
-          >
-            {EXPERIENCIAS.map((o) => (
-              <option key={o.valor} value={o.valor}>
-                {o.rotulo}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="campo" htmlFor="modalidade">
-          <span className="campo-rotulo">Modalidade</span>
-          <select
+            valor={entradas.experiencia}
+            opcoes={EXPERIENCIAS}
+            aoMudar={(v: Experiencia) => muda('experiencia', v)}
+          />
+        </div>
+        <div className="campo">
+          <label className="campo-rotulo" htmlFor="modalidade">Modalidade</label>
+          <Select
             id="modalidade"
-            value={entradas.modalidade}
-            onChange={(e) => muda('modalidade', e.target.value as Modalidade)}
-          >
-            {MODALIDADES.map((o) => (
-              <option key={o.valor} value={o.valor}>
-                {o.rotulo}
-              </option>
-            ))}
-          </select>
-        </label>
+            valor={entradas.modalidade}
+            opcoes={MODALIDADES}
+            aoMudar={(v: Modalidade) => muda('modalidade', v)}
+          />
+        </div>
         <CampoNumero
           id="dependentes"
           rotulo="Dependentes no IR"

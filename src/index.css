@@ -464,6 +464,108 @@ section {
   }
 }
 
+/* ── Select customizado ─────────────────────────────── */
+.select {
+  position: relative;
+}
+
+.select-botao {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  background: var(--surface-2);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 16px;
+  font-weight: 600;
+  padding: 10px 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.15s ease;
+}
+
+.select-botao:hover {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+}
+
+.select-botao:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.select-botao.aberto {
+  border-color: var(--accent);
+}
+
+.select-seta {
+  color: var(--muted);
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.select-botao.aberto .select-seta {
+  transform: rotate(180deg);
+  color: var(--accent);
+}
+
+.select-lista {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 30;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 4px 4px 0 var(--shadow), 0 0 24px var(--glow-pink);
+  max-height: 280px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.select-lista::-webkit-scrollbar {
+  width: 8px;
+}
+
+.select-lista::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+.select-opcao {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 11px;
+  border-radius: 8px;
+  font-size: 15px;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.select-opcao.ativa {
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+.select-opcao.escolhida {
+  color: var(--accent-deep);
+  font-weight: 800;
+}
+
+.select-opcao svg {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
 .bloco-opcional {
   border: 2px dashed var(--border);
   border-radius: 10px;

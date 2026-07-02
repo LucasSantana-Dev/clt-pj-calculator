@@ -1,0 +1,125 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+@font-face {
+  font-family: 'Departure Mono';
+  src: url('/DepartureMono-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Criativaria tokens ─────────────────────────────── */
+:root {
+  --bg:          oklch(5% 0.018 295);
+  --surface:     oklch(9% 0.012 20);
+  --surface-2:   oklch(14% 0.013 20);
+  --text:        oklch(94% 0.006 90);
+  --muted:       oklch(66% 0.008 60);
+  --border:      oklch(20% 0.014 20);
+  --accent:      oklch(73% 0.20 350);
+  --accent-deep: oklch(80% 0.17 350);
+  --on-accent:   oklch(12% 0.010 350);
+  --link:        oklch(83% 0.15 350);
+  --green:       oklch(76% 0.26 135);
+  --green-soft:  oklch(76% 0.26 135 / 0.13);
+  --violet:      oklch(71% 0.18 285);
+  --violet-soft: oklch(71% 0.18 285 / 0.15);
+  --cyan:        oklch(73% 0.14 195);
+  --cyan-soft:   oklch(73% 0.14 195 / 0.14);
+  --gold:        oklch(78% 0.14 80);
+  --gold-soft:   oklch(78% 0.14 80 / 0.14);
+  --shadow:      oklch(3% 0.012 295 / 0.75);
+  --grid-line:   oklch(100% 0 0 / 0.032);
+  --scanline:    oklch(100% 0 0 / 0.016);
+  --glow-pink:   oklch(73% 0.20 350 / 0.18);
+  --glow-violet: oklch(71% 0.18 285 / 0.07);
+  --glow-green:  oklch(76% 0.26 135 / 0.12);
+  --radius:      14px;
+  --font:        'Nunito', system-ui, sans-serif;
+  --display:     'Departure Mono', 'Courier New', monospace;
+}
+
+/* ── Base ───────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--text);
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(860px 580px at 12% 28%, var(--glow-pink), transparent 65%),
+    radial-gradient(640px 420px at 96% 4%, var(--glow-green), transparent 62%),
+    radial-gradient(780px 520px at 55% 108%, var(--glow-violet), transparent 62%),
+    repeating-linear-gradient(0deg, transparent 0px, transparent 3px, var(--scanline) 3px, var(--scanline) 4px),
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: cover, cover, cover, auto, 34px 34px, 34px 34px;
+  background-attachment: fixed;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.display {
+  font-family: var(--display);
+}
+
+/* ── Criativaria card ───────────────────────────────── */
+.cri-card {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 4px 4px 0 var(--shadow);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.cri-card:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--shadow);
+  border-color: var(--accent);
+}
+.cri-card-flat {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 4px 4px 0 var(--shadow);
+}
+
+/* ── Criativaria button ─────────────────────────────── */
+.cri-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  font-family: var(--font);
+  font-size: 16px;
+  font-weight: 800;
+  border-radius: 12px;
+  border: 2px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
+  box-shadow: 3px 3px 0 var(--shadow);
+}
+.cri-btn:hover {
+  border-color: var(--accent);
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--shadow);
+}
+.cri-btn-primary {
+  background: var(--accent);
+  color: var(--on-accent);
+  border-color: var(--accent);
+}
+.cri-btn-primary:hover {
+  background: var(--accent-deep);
+  border-color: var(--accent-deep);
+}

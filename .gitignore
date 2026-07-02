@@ -3,3 +3,5 @@ dist
 *.local
 .dev.vars
 .DS_Store
+.playwright-mcp
+*.png

@@ -81,44 +81,82 @@ export default function App() {
   const tendencias = useMemo(() => calculaTendencias(entradas.senioridade), [entradas.senioridade])
 
   return (
-    <div className="pagina">
-      <header className="cabecalho">
-        <p className="display marca">CRIATIVARIA</p>
-        <h1 className="display">Calculadora CLT x PJ</h1>
-        <p className="subtitulo">
-          Uma proposta PJ que parece maior nem sempre é. Aqui você compara os dois vínculos com a
-          matemática completa de 2026, vê a faixa de mercado para o seu perfil e recebe o valor com
-          calma, sem hype.
-        </p>
+    <div>
+      <header className="site-header">
+        <div className="container">
+          <a href="https://criativaria.com" className="brand">
+            Criativaria <span className="star">✦</span>
+          </a>
+          <nav className="nav">
+            <a href="https://criativaria.com/">Início</a>
+            <a href="https://criativaria.com/sobre">Sobre</a>
+            <a href="https://criativaria.com/guias">Guias</a>
+            <a href="https://criativaria.com/roadmaps">Roadmaps</a>
+            <a href="https://criativaria.com/cursos">Cursos</a>
+            <a href="https://criativaria.com/vagas">Vagas</a>
+          </nav>
+        </div>
       </header>
 
-      <Formulario entradas={entradas} aoMudar={setEntradas} />
+      <div className="pagina">
+        <header className="cabecalho">
+          <p className="display marca">CALCULADORA</p>
+          <h1 className="display">CLT x PJ</h1>
+          <p className="subtitulo">
+            Uma proposta PJ que parece maior nem sempre é. Aqui você compara os dois vínculos com a
+            matemática completa de 2026, vê a faixa de mercado para o seu perfil e recebe o valor com
+            calma, sem hype.
+          </p>
+        </header>
 
-      {!temValor && (
-        <p className="aguardando nota">
-          Informe o valor da proposta acima para ver a comparação completa.
-        </p>
-      )}
+        <Formulario entradas={entradas} aoMudar={setEntradas} />
 
-      {resultado?.tipo === 'clt-para-pj' && (
-        <>
-          <ResultadoCltParaPj eq={resultado.eq} />
-          {colchao && <Colchao resultado={colchao} config={colchaoConfig} aoMudar={setColchaoConfig} />}
-        </>
-      )}
-      {resultado?.tipo === 'pj-para-clt' && <ResultadoPjParaClt eq={resultado.eq} />}
+        {!temValor && (
+          <p className="aguardando nota">
+            Informe o valor da proposta acima para ver a comparação completa.
+          </p>
+        )}
 
-      {benchmark && <Benchmark resultado={benchmark} />}
-      {temValor && <Tendencias dados={tendencias} />}
-      {temValor && <Funil />}
+        {resultado?.tipo === 'clt-para-pj' && (
+          <>
+            <ResultadoCltParaPj eq={resultado.eq} />
+            {colchao && <Colchao resultado={colchao} config={colchaoConfig} aoMudar={setColchaoConfig} />}
+          </>
+        )}
+        {resultado?.tipo === 'pj-para-clt' && <ResultadoPjParaClt eq={resultado.eq} />}
 
-      <footer className="rodape nota">
-        <p>
-          Cálculo 100% no seu navegador: nenhum valor que você digita sai desta página. Parâmetros
-          fiscais de 2026 (INSS, IRRF com a Lei 15.270, Simples Nacional Anexos III e V, fator R).
-          Benchmark: Pesquisa Código Fonte TV, edições 2021 a 2026. Esta ferramenta é educativa e não
-          substitui contador ou advogado.
-        </p>
+        {benchmark && <Benchmark resultado={benchmark} />}
+        {temValor && <Tendencias dados={tendencias} />}
+        {temValor && <Funil />}
+
+        <footer className="rodape nota">
+          <p>
+            Cálculo 100% no seu navegador: nenhum valor que você digita sai desta página. Parâmetros
+            fiscais de 2026 (INSS, IRRF com a Lei 15.270, Simples Nacional Anexos III e V, fator R).
+            Benchmark: Pesquisa Código Fonte TV, edições 2021 a 2026. Esta ferramenta é educativa e não
+            substitui contador ou advogado.
+          </p>
+        </footer>
+      </div>
+
+      <footer className="site-footer">
+        <div className="footer-inner">
+          <div className="footer-social">
+            <a href="https://discord.gg/9mV9HnEkfT" target="_blank" rel="noopener noreferrer">
+              Entrar na comunidade (Discord)
+            </a>
+            <a href="https://www.twitch.tv/criativaria" target="_blank" rel="noopener noreferrer">
+              Acompanhar a live (Twitch)
+            </a>
+            <a href="https://apoia.se/criativaria" target="_blank" rel="noopener noreferrer">
+              Apoiar na comunidade
+            </a>
+            <a href="https://criativaria.com/sobre">Sobre a Criativaria</a>
+          </div>
+          <p className="footer-legal">
+            Criativaria · conteúdo aberto sob CC BY-SA 4.0 · feito pela comunidade
+          </p>
+        </div>
       </footer>
     </div>
   )

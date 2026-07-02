@@ -8,13 +8,13 @@
   font-display: swap;
 }
 
-/* ── Criativaria tokens ─────────────────────────────── */
+/* ── Tokens — Criativaria design system (dark-first) ────────── */
 :root {
   --bg:          oklch(5% 0.018 295);
   --surface:     oklch(9% 0.012 20);
   --surface-2:   oklch(14% 0.013 20);
   --text:        oklch(94% 0.006 90);
-  --muted:       oklch(66% 0.008 60);
+  --muted:       oklch(62% 0.008 60);
   --border:      oklch(20% 0.014 20);
   --accent:      oklch(73% 0.20 350);
   --accent-deep: oklch(80% 0.17 350);
@@ -22,6 +22,7 @@
   --link:        oklch(83% 0.15 350);
   --green:       oklch(76% 0.26 135);
   --green-soft:  oklch(76% 0.26 135 / 0.13);
+  --green-ui:    oklch(76% 0.26 135);
   --violet:      oklch(71% 0.18 285);
   --violet-soft: oklch(71% 0.18 285 / 0.15);
   --cyan:        oklch(73% 0.14 195);
@@ -35,15 +36,21 @@
   --glow-violet: oklch(71% 0.18 285 / 0.07);
   --glow-green:  oklch(76% 0.26 135 / 0.12);
   --radius:      14px;
-  --font:        'Nunito', system-ui, sans-serif;
-  --display:     'Departure Mono', 'Courier New', monospace;
+  --maxw:        760px;
+  --font:        'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --display:     'Departure Mono', 'Courier New', Courier, monospace;
+  --mono:        'Departure Mono', 'Courier New', Courier, monospace;
 }
 
-/* ── Base ───────────────────────────────────────────── */
+/* ── Base ───────────────────────────────────────────────────── */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+html {
+  font-size: 112.5%;
 }
 
 body {
@@ -66,13 +73,154 @@ body {
 
 #root {
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  color: var(--link);
+  text-decoration: none;
 }
 
 .display {
   font-family: var(--display);
 }
 
-/* ── Criativaria card ───────────────────────────────── */
+/* ── Header / Navigation ────────────────────────────────────── */
+.site-header {
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg) 80%, transparent);
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.site-header .container {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  height: 64px;
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.brand {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.389rem;
+  color: var(--text);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.brand .star {
+  color: var(--accent);
+}
+
+.nav {
+  margin-left: auto;
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.nav a {
+  text-decoration: none;
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 0.833rem;
+  transition: color 0.15s ease;
+}
+
+.nav a:hover {
+  color: var(--text);
+}
+
+.nav-discord,
+.nav-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--muted);
+}
+
+.nav-discord:hover,
+.nav-live:hover {
+  color: var(--text);
+}
+
+.nav-live {
+  color: var(--violet) !important;
+  font-weight: 800;
+}
+
+.nav-live:hover {
+  color: var(--accent-deep) !important;
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--muted);
+  flex: none;
+}
+
+/* ── Footer ────────────────────────────────────────────────── */
+.site-footer {
+  border-top: 1px solid var(--border);
+  margin-top: 72px;
+  padding: 28px 0;
+  color: var(--muted);
+  font-size: 0.778rem;
+  margin-top: auto;
+}
+
+.site-footer .footer-inner {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.footer-social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 20px;
+  font-size: 0.889rem;
+}
+
+.footer-social a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--link);
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+
+.footer-social a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.footer-legal {
+  text-align: center;
+  margin: 0;
+  color: var(--muted);
+}
+
+.icon {
+  vertical-align: -0.18em;
+  flex: none;
+  width: 1em;
+  height: 1em;
+}
+
+/* ── Criativaria card (offset shadow + border) ──────────────── */
 .cri-card {
   background: var(--surface);
   border: 2px solid var(--border);
@@ -80,11 +228,13 @@ body {
   box-shadow: 4px 4px 0 var(--shadow);
   transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 }
+
 .cri-card:hover {
   transform: translate(2px, 2px);
   box-shadow: 2px 2px 0 var(--shadow);
   border-color: var(--accent);
 }
+
 .cri-card-flat {
   background: var(--surface);
   border: 2px solid var(--border);
@@ -92,7 +242,7 @@ body {
   box-shadow: 4px 4px 0 var(--shadow);
 }
 
-/* ── Criativaria button ─────────────────────────────── */
+/* ── Criativaria button ────────────────────────────────────── */
 .cri-btn {
   display: inline-flex;
   align-items: center;
@@ -108,122 +258,451 @@ body {
   cursor: pointer;
   transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
   box-shadow: 3px 3px 0 var(--shadow);
+  text-decoration: none;
 }
+
 .cri-btn:hover {
   border-color: var(--accent);
   transform: translate(1px, 1px);
   box-shadow: 2px 2px 0 var(--shadow);
 }
+
 .cri-btn-primary {
   background: var(--accent);
   color: var(--on-accent);
   border-color: var(--accent);
 }
+
 .cri-btn-primary:hover {
   background: var(--accent-deep);
   border-color: var(--accent-deep);
 }
 
-/* ── Layout da página ───────────────────────────────── */
+/* ── Layout da página ──────────────────────────────────────── */
 .pagina {
+  flex: 1;
   max-width: 980px;
   margin: 0 auto;
-  padding: 48px 20px 80px;
+  padding: 48px 20px;
   display: flex;
   flex-direction: column;
   gap: 28px;
+  width: 100%;
 }
-.cabecalho { text-align: center; padding: 24px 0 8px; }
-.marca { color: var(--accent); letter-spacing: 0.35em; font-size: 13px; margin: 0 0 10px; }
-.cabecalho h1 { font-size: clamp(28px, 5vw, 44px); margin: 0 0 14px; line-height: 1.15; }
-.subtitulo { color: var(--muted); max-width: 640px; margin: 0 auto; font-size: 17px; }
 
-section { padding: 26px; }
-.nota { color: var(--muted); font-size: 15px; line-height: 1.6; }
-.aguardando { text-align: center; }
+.cabecalho {
+  text-align: center;
+  padding: 24px 0 8px;
+}
 
-/* ── Formulário ─────────────────────────────────────── */
-.formulario { display: flex; flex-direction: column; gap: 20px; }
-.toggle-direcao { display: flex; gap: 8px; background: var(--surface-2); border-radius: 12px; padding: 6px; border: 2px solid var(--border); }
+.marca {
+  color: var(--accent);
+  letter-spacing: 0.35em;
+  font-size: 13px;
+  margin: 0 0 10px;
+}
+
+.cabecalho h1 {
+  font-size: clamp(28px, 5vw, 44px);
+  margin: 0 0 14px;
+  line-height: 1.15;
+}
+
+.subtitulo {
+  color: var(--muted);
+  max-width: 640px;
+  margin: 0 auto;
+  font-size: 17px;
+}
+
+section {
+  padding: 26px;
+}
+
+.nota {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.aguardando {
+  text-align: center;
+}
+
+/* ── Formulário ────────────────────────────────────────────── */
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.toggle-direcao {
+  display: flex;
+  gap: 8px;
+  background: var(--surface-2);
+  border-radius: 12px;
+  padding: 6px;
+  border: 2px solid var(--border);
+}
+
 .toggle-direcao button {
-  flex: 1; padding: 12px; border-radius: 8px; border: none; cursor: pointer;
-  font-family: var(--font); font-weight: 800; font-size: 15px;
-  background: transparent; color: var(--muted); transition: background 0.15s, color 0.15s;
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font);
+  font-weight: 800;
+  font-size: 15px;
+  background: transparent;
+  color: var(--muted);
+  transition: background 0.15s, color 0.15s;
 }
-.toggle-direcao button.ativo { background: var(--accent); color: var(--on-accent); }
 
-.campo { display: flex; flex-direction: column; gap: 6px; }
-.campo-rotulo { font-size: 14px; font-weight: 700; color: var(--muted); }
-.campo input, .campo select {
-  background: var(--surface-2); border: 2px solid var(--border); border-radius: 10px;
-  color: var(--text); font-family: var(--font); font-size: 16px; padding: 10px 12px; width: 100%;
+.toggle-direcao button.ativo {
+  background: var(--accent);
+  color: var(--on-accent);
 }
-.campo input:focus, .campo select:focus { outline: none; border-color: var(--accent); }
-.campo-input { display: flex; align-items: center; gap: 8px; }
-.campo-prefixo { color: var(--muted); font-family: var(--display); font-size: 14px; }
 
-.grade-perfil { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-.grade-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.grade-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.campo-rotulo {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.campo input,
+.campo select {
+  background: var(--surface-2);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 16px;
+  padding: 10px 12px;
+  width: 100%;
+  transition: border-color 0.15s;
+}
+
+.campo input:focus,
+.campo select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.campo-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.campo-prefixo {
+  color: var(--muted);
+  font-family: var(--display);
+  font-size: 14px;
+}
+
+.grade-perfil,
+.grade-2,
+.grade-3 {
+  display: grid;
+  gap: 14px;
+}
+
+.grade-perfil {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grade-2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.grade-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
 @media (max-width: 720px) {
-  .grade-perfil, .grade-3 { grid-template-columns: 1fr; }
-  .grade-2 { grid-template-columns: 1fr; }
+  .grade-perfil,
+  .grade-3 {
+    grid-template-columns: 1fr;
+  }
+  .grade-2 {
+    grid-template-columns: 1fr;
+  }
 }
 
-.bloco-opcional { border: 2px dashed var(--border); border-radius: 10px; padding: 14px 16px; }
-.bloco-opcional summary { cursor: pointer; font-weight: 800; color: var(--cyan); }
-.bloco-opcional[open] summary { margin-bottom: 8px; }
+.bloco-opcional {
+  border: 2px dashed var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
 
-/* ── Resultado ──────────────────────────────────────── */
-.resultado { display: flex; flex-direction: column; gap: 20px; padding: 0; }
-.destaque { text-align: center; padding: 30px; border-color: var(--accent); }
-.destaque-legenda { color: var(--muted); margin: 0 0 6px; }
-.destaque-valor { font-size: clamp(30px, 6vw, 46px); color: var(--green); margin: 0 0 12px; }
-.destaque-mes { font-size: 16px; color: var(--muted); margin-left: 6px; }
+.bloco-opcional summary {
+  cursor: pointer;
+  font-weight: 800;
+  color: var(--cyan);
+}
 
-.lado dl { display: flex; flex-direction: column; gap: 8px; margin: 12px 0 0; }
-.lado dl div { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
-.lado dt { color: var(--muted); font-size: 15px; }
-.lado dd { margin: 0; font-weight: 800; font-size: 15px; white-space: nowrap; }
-.lado h3 { margin: 0; font-size: 16px; color: var(--cyan); }
+.bloco-opcional[open] summary {
+  margin-bottom: 8px;
+}
 
-/* ── Colchão ────────────────────────────────────────── */
-.colchao h3 { margin: 0 0 8px; font-size: 16px; color: var(--gold); }
-.colchao-config { margin: 16px 0; }
-.colchao-itens { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
-.colchao-itens li { background: var(--surface-2); border-radius: 10px; padding: 12px 14px; }
-.colchao-item-topo { display: flex; justify-content: space-between; font-size: 15px; }
-.colchao-itens .nota { margin: 4px 0 0; font-size: 13.5px; }
-.colchao-total { text-align: center; margin-top: 18px; }
-.colchao-total p:first-child { color: var(--muted); margin-bottom: 4px; }
-.colchao-total .destaque-valor { color: var(--gold); }
+/* ── Resultado ──────────────────────────────────────────────── */
+.resultado {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 0;
+}
 
-/* ── Benchmark ──────────────────────────────────────── */
-.benchmark h3 { margin: 0 0 10px; font-size: 16px; color: var(--violet); }
-.faixa-barra { position: relative; height: 18px; background: var(--surface-2); border-radius: 999px; margin: 18px 0 8px; border: 1px solid var(--border); }
-.faixa-preenchida { position: absolute; top: 0; bottom: 0; background: var(--violet-soft); border: 1px solid var(--violet); border-radius: 999px; }
-.faixa-marcador { position: absolute; top: -5px; width: 4px; height: 28px; background: var(--accent); border-radius: 2px; transform: translateX(-50%); box-shadow: 0 0 10px var(--glow-pink); }
-.faixa-rotulos { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); font-family: var(--display); }
-.faixa-central { text-align: center; }
-.como-calculamos { margin-top: 16px; }
-.como-calculamos summary { cursor: pointer; color: var(--cyan); font-weight: 800; }
-.como-calculamos ul { margin: 8px 0; padding-left: 20px; font-size: 15px; }
-.como-calculamos a { color: var(--link); }
+.destaque {
+  text-align: center;
+  padding: 30px;
+  border-color: var(--accent);
+}
 
-/* ── Tendências ─────────────────────────────────────── */
-.tendencias h3 { margin: 0 0 6px; font-size: 16px; color: var(--green); }
-.tendencia-bloco h4 { margin: 12px 0 4px; font-size: 14px; color: var(--muted); font-family: var(--display); }
-.sparkline { width: 100%; height: 56px; }
-.leitura { font-size: 16px; margin-top: 14px; }
+.destaque-legenda {
+  color: var(--muted);
+  margin: 0 0 6px;
+}
 
-/* ── Funil ──────────────────────────────────────────── */
-.funil { padding: 0; display: flex; flex-direction: column; gap: 16px; }
-.funil h3 { margin: 0; font-size: 16px; color: var(--accent); }
-.guia-card { display: block; padding: 18px; text-decoration: none; color: var(--text); }
-.guia-card h4 { margin: 0 0 6px; font-size: 15px; }
-.discord-cta { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 20px 24px; flex-wrap: wrap; }
-.discord-cta p { margin: 0; max-width: 520px; }
-.cri-btn { text-decoration: none; }
+.destaque-valor {
+  font-size: clamp(30px, 6vw, 46px);
+  color: var(--green);
+  margin: 0 0 12px;
+}
 
-/* ── Rodapé ─────────────────────────────────────────── */
-.rodape { text-align: center; max-width: 760px; margin: 12px auto 0; font-size: 13.5px; }
+.destaque-mes {
+  font-size: 16px;
+  color: var(--muted);
+  margin-left: 6px;
+}
+
+.lado dl {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 0 0;
+}
+
+.lado dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 6px;
+}
+
+.lado dt {
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.lado dd {
+  margin: 0;
+  font-weight: 800;
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.lado h3 {
+  margin: 0;
+  font-size: 16px;
+  color: var(--cyan);
+}
+
+/* ── Colchão ────────────────────────────────────────────────── */
+.colchao h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+  color: var(--gold);
+}
+
+.colchao-config {
+  margin: 16px 0;
+}
+
+.colchao-itens {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.colchao-itens li {
+  background: var(--surface-2);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.colchao-item-topo {
+  display: flex;
+  justify-content: space-between;
+  font-size: 15px;
+}
+
+.colchao-itens .nota {
+  margin: 4px 0 0;
+  font-size: 13.5px;
+}
+
+.colchao-total {
+  text-align: center;
+  margin-top: 18px;
+}
+
+.colchao-total p:first-child {
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.colchao-total .destaque-valor {
+  color: var(--gold);
+}
+
+/* ── Benchmark ──────────────────────────────────────────────── */
+.benchmark h3 {
+  margin: 0 0 10px;
+  font-size: 16px;
+  color: var(--violet);
+}
+
+.faixa-barra {
+  position: relative;
+  height: 18px;
+  background: var(--surface-2);
+  border-radius: 999px;
+  margin: 18px 0 8px;
+  border: 1px solid var(--border);
+}
+
+.faixa-preenchida {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: var(--violet-soft);
+  border: 1px solid var(--violet);
+  border-radius: 999px;
+}
+
+.faixa-marcador {
+  position: absolute;
+  top: -5px;
+  width: 4px;
+  height: 28px;
+  background: var(--accent);
+  border-radius: 2px;
+  transform: translateX(-50%);
+  box-shadow: 0 0 10px var(--glow-pink);
+}
+
+.faixa-rotulos {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--muted);
+  font-family: var(--display);
+}
+
+.faixa-central {
+  text-align: center;
+}
+
+.como-calculamos {
+  margin-top: 16px;
+}
+
+.como-calculamos summary {
+  cursor: pointer;
+  color: var(--cyan);
+  font-weight: 800;
+}
+
+.como-calculamos ul {
+  margin: 8px 0;
+  padding-left: 20px;
+  font-size: 15px;
+}
+
+.como-calculamos a {
+  color: var(--link);
+}
+
+/* ── Tendências ────────────────────────────────────────────── */
+.tendencias h3 {
+  margin: 0 0 6px;
+  font-size: 16px;
+  color: var(--green);
+}
+
+.tendencia-bloco h4 {
+  margin: 12px 0 4px;
+  font-size: 14px;
+  color: var(--muted);
+  font-family: var(--display);
+}
+
+.sparkline {
+  width: 100%;
+  height: 56px;
+}
+
+.leitura {
+  font-size: 16px;
+  margin-top: 14px;
+}
+
+/* ── Funil ──────────────────────────────────────────────────── */
+.funil {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.funil h3 {
+  margin: 0;
+  font-size: 16px;
+  color: var(--accent);
+}
+
+.guia-card {
+  display: block;
+  padding: 18px;
+  text-decoration: none;
+  color: var(--text);
+}
+
+.guia-card h4 {
+  margin: 0 0 6px;
+  font-size: 15px;
+}
+
+.discord-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 20px 24px;
+  flex-wrap: wrap;
+}
+
+.discord-cta p {
+  margin: 0;
+  max-width: 520px;
+}
+
+/* ── Rodapé ─────────────────────────────────────────────────── */
+.rodape {
+  text-align: center;
+  max-width: 760px;
+  margin: 12px auto 0;
+  font-size: 13.5px;
+}

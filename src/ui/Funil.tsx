@@ -1,11 +1,13 @@
-import { DISCORD, GUIAS_RELACIONADOS, SITE } from './opcoes'
+import type { Senioridade } from '../engine/benchmark'
+import { DISCORD, GUIAS_POR_SENIORIDADE, SITE } from './opcoes'
 
-export function Funil() {
+export function Funil({ senioridade }: { senioridade: Senioridade }) {
+  const guias = GUIAS_POR_SENIORIDADE[senioridade]
   return (
     <section className="funil">
       <h3 className="display">Para continuar de onde a calculadora para</h3>
       <div className="grade-3">
-        {GUIAS_RELACIONADOS.map((g) => (
+        {guias.map((g) => (
           <a key={g.slug} className="cri-card guia-card" href={`${SITE}/guias/${g.slug}`} target="_blank" rel="noreferrer">
             <h4>{g.titulo}</h4>
             <p className="nota">{g.descricao}</p>

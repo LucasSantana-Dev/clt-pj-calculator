@@ -77,22 +77,62 @@ export const MODALIDADES: { valor: Modalidade; rotulo: string }[] = [
 ]
 
 export const SITE = 'https://criativaria.com'
-export const DISCORD = 'https://discord.gg/criativaria'
+export const DISCORD = 'https://discord.gg/9mV9HnEkfT'
 
-export const GUIAS_RELACIONADOS = [
-  {
+export interface GuiaRelacionado {
+  slug: string
+  titulo: string
+  descricao: string
+}
+
+const GUIA: Record<string, GuiaRelacionado> = {
+  vagaJunior: {
     slug: 'como-ler-uma-vaga-junior',
     titulo: 'Como ler uma vaga júnior',
     descricao: 'Interpretar o que a vaga pede de verdade, sem se assustar com a lista de requisitos.',
   },
-  {
+  curriculo: {
+    slug: 'curriculo-tech-que-passa-no-filtro',
+    titulo: 'Currículo tech que passa no filtro',
+    descricao: 'Um CV que chega até quem decide, sem enfeite.',
+  },
+  processoSeletivo: {
     slug: 'processo-seletivo-do-cv-a-entrevista',
     titulo: 'Processo seletivo: do CV à entrevista',
     descricao: 'O caminho completo de uma candidatura, etapa por etapa.',
   },
-  {
+  entrevistaTecnica: {
+    slug: 'tipos-de-entrevista-tecnica-e-como-treinar',
+    titulo: 'Tipos de entrevista técnica',
+    descricao: 'O que esperar de cada etapa e como treinar para elas.',
+  },
+  conexoes: {
+    slug: 'conexoes-rede-se-constroi-antes-da-vaga',
+    titulo: 'Conexões: rede se constrói antes da vaga',
+    descricao: 'Relações que abrem portas, construídas antes de você precisar delas.',
+  },
+  offshore: {
     slug: 'contratacao-offshore-como-ser-contratado-fora',
     titulo: 'Contratação offshore',
     descricao: 'Como funciona trabalhar PJ para empresas de fora do Brasil.',
   },
-]
+  linkedin: {
+    slug: 'linkedin-de-um-curriculo-parado-para-uma-landing-page-de-aut',
+    titulo: 'LinkedIn como página de autoridade',
+    descricao: 'De currículo parado a vitrine do seu trabalho.',
+  },
+  estruturaTimes: {
+    slug: 'estrutura-de-times-como-trabalhar-em-equipe',
+    titulo: 'Estrutura de times',
+    descricao: 'Como times de tecnologia se organizam na prática.',
+  },
+}
+
+/** Recomendações por senioridade: quem é sênior não precisa de guia de vaga júnior. */
+export const GUIAS_POR_SENIORIDADE: Record<Senioridade, GuiaRelacionado[]> = {
+  estagio: [GUIA.vagaJunior, GUIA.curriculo, GUIA.processoSeletivo],
+  junior: [GUIA.vagaJunior, GUIA.curriculo, GUIA.processoSeletivo],
+  pleno: [GUIA.entrevistaTecnica, GUIA.conexoes, GUIA.offshore],
+  senior: [GUIA.offshore, GUIA.linkedin, GUIA.estruturaTimes],
+  especialista: [GUIA.offshore, GUIA.linkedin, GUIA.estruturaTimes],
+}

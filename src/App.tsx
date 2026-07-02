@@ -127,7 +127,7 @@ export default function App() {
 
         {benchmark && <Benchmark resultado={benchmark} />}
         {temValor && <Tendencias dados={tendencias} />}
-        {temValor && <Funil />}
+        {temValor && <Funil senioridade={entradas.senioridade} />}
 
         <footer className="rodape nota">
           <p>

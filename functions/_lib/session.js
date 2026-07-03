@@ -32,20 +32,24 @@ export async function signSession(payload, secret) {
 }
 
 export async function verifySession(token, secret) {
-  if (!token) return null
-  const dot = token.lastIndexOf('.')
-  if (dot < 0) return null
-  const data = token.slice(0, dot)
-  const sig  = token.slice(dot + 1)
-
-  const key = await getKey(secret)
-  const sigBytes = Uint8Array.from(b64urlDecode(sig), c => c.charCodeAt(0))
-  const valid = await crypto.subtle.verify('HMAC', key, sigBytes, new TextEncoder().encode(data))
-  if (!valid) return null
-
-  const payload = JSON.parse(b64urlDecode(data))
-  if (payload.exp < Date.now()) return null
-  return payload
+  try {
+    if (!token) return null
+    const dot = token.lastIndexOf('.')
+    if (dot < 0) return null
+    const data = token.slice(0, dot)
+    const sig  = token.slice(dot + 1)
+  
+    const key = await getKey(secret)
+    const sigBytes = Uint8Array.from(b64urlDecode(sig), c => c.charCodeAt(0))
+    const valid = await crypto.subtle.verify('HMAC', key, sigBytes, new TextEncoder().encode(data))
+    if (!valid) return null
+  
+    const payload = JSON.parse(b64urlDecode(data))
+    if (payload.exp < Date.now()) return null
+    return payload
+  } catch {
+    return null
+  }
 }
 
 export function sessionCookie(token) {
@@ -75,18 +79,22 @@ export async function signPartial(payload, secret) {
 }
 
 export async function verifyPartial(token, secret) {
-  if (!token) return null
-  const dot = token.lastIndexOf('.')
-  if (dot < 0) return null
-  const data = token.slice(0, dot)
-  const sig  = token.slice(dot + 1)
-  const key  = await getKey(secret)
-  const sigBytes = Uint8Array.from(b64urlDecode(sig), c => c.charCodeAt(0))
-  const valid = await crypto.subtle.verify('HMAC', key, sigBytes, new TextEncoder().encode(data))
-  if (!valid) return null
-  const payload = JSON.parse(b64urlDecode(data))
-  if (payload.exp < Date.now()) return null
-  return payload
+  try {
+    if (!token) return null
+    const dot = token.lastIndexOf('.')
+    if (dot < 0) return null
+    const data = token.slice(0, dot)
+    const sig  = token.slice(dot + 1)
+    const key  = await getKey(secret)
+    const sigBytes = Uint8Array.from(b64urlDecode(sig), c => c.charCodeAt(0))
+    const valid = await crypto.subtle.verify('HMAC', key, sigBytes, new TextEncoder().encode(data))
+    if (!valid) return null
+    const payload = JSON.parse(b64urlDecode(data))
+    if (payload.exp < Date.now()) return null
+    return payload
+  } catch {
+    return null
+  }
 }
 
 export function partialCookie(token) {

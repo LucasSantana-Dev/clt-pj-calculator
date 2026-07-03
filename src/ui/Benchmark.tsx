@@ -1,97 +1,97 @@
 import type { BenchmarkResult } from '../engine/benchmark'
-import { brl, brlExato } from './formato'
+import { brl, brlExact } from './format'
 
-const TEXTO_POSICAO = {
-  abaixo: 'abaixo da faixa estimada para esse perfil. Pode ser espaço real de negociação.',
-  dentro: 'dentro da faixa estimada para esse perfil.',
-  acima: 'acima da faixa estimada para esse perfil. Bom sinal.',
+const POSITION_TEXT = {
+  below: 'below da faixa estimada para esse perfil. Pode ser espaço real de negociação.',
+  within: 'within da faixa estimada para esse perfil.',
+  above: 'above da faixa estimada para esse perfil. Bom sinal.',
 } as const
 
-export function Benchmark({ resultado }: { resultado: BenchmarkResult }) {
-  const { faixaMin, faixaMax, estimativaCentral, valorComparado, posicao } = resultado
+export function Benchmark({ result }: { result: BenchmarkResult }) {
+  const { rangeMin, rangeMax, centralEstimate, comparedValue, position } = result
 
-  const inicio = faixaMin * 0.75
-  const fim = faixaMax * 1.25
-  const posPct = (v: number) => Math.min(98, Math.max(2, ((v - inicio) / (fim - inicio)) * 100))
+  const start = rangeMin * 0.75
+  const end = rangeMax * 1.25
+  const posPct = (v: number) => Math.min(98, Math.max(2, ((v - start) / (end - start)) * 100))
 
   return (
     <section className="cri-card-flat benchmark">
       <h3 className="display">Como esse valor se compara ao mercado</h3>
       <p>
-        Seu valor bruto de {brl(valorComparado)} está <strong>{TEXTO_POSICAO[posicao]}</strong>
+        Seu valor bruto de {brl(comparedValue)} está <strong>{POSITION_TEXT[position]}</strong>
       </p>
 
       <div
-        className="faixa-area"
+        className="range-area"
         role="img"
-        aria-label={`Faixa estimada de ${brl(faixaMin)} a ${brl(faixaMax)}, centro ${brl(estimativaCentral)}; seu valor: ${brl(valorComparado)}`}
+        aria-label={`Faixa estimada de ${brl(rangeMin)} a ${brl(rangeMax)}, centro ${brl(centralEstimate)}; seu valor: ${brl(comparedValue)}`}
       >
         <div
-          className="faixa-voce"
-          style={{ left: `${posPct(valorComparado)}%` }}
-          data-borda={posPct(valorComparado) < 14 ? 'esq' : posPct(valorComparado) > 86 ? 'dir' : undefined}
+          className="you-chip"
+          style={{ left: `${posPct(comparedValue)}%` }}
+          data-edge={posPct(comparedValue) < 14 ? 'left' : posPct(comparedValue) > 86 ? 'right' : undefined}
         >
-          você: {brl(valorComparado)}
+          você: {brl(comparedValue)}
         </div>
-        <div className="faixa-barra">
+        <div className="range-bar">
           <div
-            className="faixa-preenchida"
-            style={{ left: `${posPct(faixaMin)}%`, width: `${posPct(faixaMax) - posPct(faixaMin)}%` }}
+            className="range-band"
+            style={{ left: `${posPct(rangeMin)}%`, width: `${posPct(rangeMax) - posPct(rangeMin)}%` }}
           />
-          <div className="faixa-centro" style={{ left: `${posPct(estimativaCentral)}%` }} />
-          <div className="faixa-marcador" style={{ left: `${posPct(valorComparado)}%` }} />
+          <div className="range-center" style={{ left: `${posPct(centralEstimate)}%` }} />
+          <div className="range-marker" style={{ left: `${posPct(comparedValue)}%` }} />
         </div>
-        <div className="faixa-rotulos-band">
-          <span className="faixa-limite" style={{ left: `${posPct(faixaMin)}%` }}>
-            {brl(faixaMin)}
+        <div className="range-labels">
+          <span className="range-bound" style={{ left: `${posPct(rangeMin)}%` }}>
+            {brl(rangeMin)}
           </span>
-          <span className="faixa-limite faixa-limite-centro" style={{ left: `${posPct(estimativaCentral)}%` }}>
+          <span className="range-bound range-bound-center" style={{ left: `${posPct(centralEstimate)}%` }}>
             centro
             <br />
-            {brl(estimativaCentral)}
+            {brl(centralEstimate)}
           </span>
-          <span className="faixa-limite" style={{ left: `${posPct(faixaMax)}%` }}>
-            {brl(faixaMax)}
+          <span className="range-bound" style={{ left: `${posPct(rangeMax)}%` }}>
+            {brl(rangeMax)}
           </span>
         </div>
       </div>
-      <p className="faixa-legenda-texto nota">
-        A área roxa é a faixa estimada para o seu perfil; o marcador rosa é o valor que você informou.
+      <p className="range-caption note">
+        A área roxa é a faixa estimada para o seu profile; o marcador rosa é o valor que você informou.
       </p>
 
-      <details className="como-calculamos">
+      <details className="how-we-calculate">
         <summary>Como calculamos essa faixa</summary>
-        <p className="nota">
+        <p className="note">
           A faixa é uma estimativa construída a partir dos agregados publicados pela{' '}
-          <a href={resultado.fonte.url} target="_blank" rel="noreferrer">
-            {resultado.fonte.fonte}
+          <a href={result.source.url} target="_blank" rel="noreferrer">
+            {result.source.source}
           </a>{' '}
-          ({resultado.fonte.respondentes.toLocaleString('pt-BR')} respondentes). A pesquisa não publica o
-          cruzamento exato do seu perfil, então partimos da média da senioridade e ajustamos por área, estado
+          ({result.source.respondents.toLocaleString('pt-BR')} respondents). A pesquisa não publica o
+          cruzamento exato do seu profile, então partimos da média da senioridade e ajustamos por área, estado
           e tipo de vínculo. Estimativa honesta, não dado observado.
         </p>
         <ul>
-          {resultado.fatores.map((f) => (
-            <li key={f.chave}>
-              {f.rotulo}:{' '}
-              {f.chave === 'base-senioridade' ? (
-                <strong>{brlExato(f.valor)}</strong>
+          {result.factors.map((f) => (
+            <li key={f.key}>
+              {f.label}:{' '}
+              {f.key === 'seniority-base' ? (
+                <strong>{brlExact(f.value)}</strong>
               ) : (
                 <>
-                  <strong>×{f.valor.toLocaleString('pt-BR', { maximumFractionDigits: 4 })}</strong>{' '}
-                  (média do recorte: {brlExato(f.referencia)}, média nacional:{' '}
-                  {brlExato(resultado.mediaNacionalGeral)})
+                  <strong>×{f.value.toLocaleString('pt-BR', { maximumFractionDigits: 4 })}</strong>{' '}
+                  (média do recorte: {brlExact(f.reference)}, média national:{' '}
+                  {brlExact(result.nationalAverage)})
                 </>
               )}
             </li>
           ))}
         </ul>
-        {resultado.contexto.map((c) => (
-          <p className="nota" key={c.rotulo}>
-            <strong>{c.rotulo}:</strong> {c.texto}
+        {result.context.map((c) => (
+          <p className="note" key={c.label}>
+            <strong>{c.label}:</strong> {c.text}
           </p>
         ))}
-        <p className="nota">Aplicamos ±15% em torno da estimativa central para formar a faixa.</p>
+        <p className="note">Aplicamos ±15% em torno da estimativa central para formar a bracket.</p>
       </details>
     </section>
   )

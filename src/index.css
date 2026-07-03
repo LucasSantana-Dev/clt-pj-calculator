@@ -307,7 +307,7 @@ a {
 }
 
 /* ── Layout da página ──────────────────────────────────────── */
-.pagina {
+.page {
   flex: 1;
   max-width: 980px;
   margin: 0 auto;
@@ -318,25 +318,25 @@ a {
   width: 100%;
 }
 
-.cabecalho {
+.hero {
   text-align: center;
   padding: 24px 0 8px;
 }
 
-.marca {
+.eyebrow {
   color: var(--accent);
   letter-spacing: 0.35em;
   font-size: 13px;
   margin: 0 0 10px;
 }
 
-.cabecalho h1 {
+.hero h1 {
   font-size: clamp(28px, 5vw, 44px);
   margin: 0 0 14px;
   line-height: 1.15;
 }
 
-.subtitulo {
+.subtitle {
   color: var(--muted);
   max-width: 640px;
   margin: 0 auto;
@@ -347,24 +347,24 @@ section {
   padding: 26px;
 }
 
-.nota {
+.note {
   color: var(--muted);
   font-size: 15px;
   line-height: 1.6;
 }
 
-.aguardando {
+.waiting {
   text-align: center;
 }
 
 /* ── Formulário ────────────────────────────────────────────── */
-.formulario {
+.calc-form {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-.toggle-direcao {
+.direction-toggle {
   display: flex;
   gap: 8px;
   background: var(--surface-2);
@@ -373,7 +373,7 @@ section {
   border: 2px solid var(--border);
 }
 
-.toggle-direcao button {
+.direction-toggle button {
   flex: 1;
   padding: 12px;
   border-radius: 8px;
@@ -387,25 +387,25 @@ section {
   transition: background 0.15s, color 0.15s;
 }
 
-.toggle-direcao button.ativo {
+.direction-toggle button.ativo {
   background: var(--accent);
   color: var(--on-accent);
 }
 
-.campo {
+.field {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.campo-rotulo {
+.field-label {
   font-size: 14px;
   font-weight: 700;
   color: var(--muted);
 }
 
-.campo input,
-.campo select {
+.field input,
+.field select {
   background: var(--surface-2);
   border: 2px solid var(--border);
   border-radius: 10px;
@@ -417,20 +417,20 @@ section {
   transition: border-color 0.15s;
 }
 
-.campo input:focus,
-.campo select:focus {
+.field input:focus,
+.field select:focus {
   outline: none;
   border-color: var(--accent);
 }
 
-.campo-prefixo {
+.field-prefix {
   color: var(--muted);
   font-family: var(--display);
   font-size: 14px;
 }
 
 /* ── Campo numérico com stepper ─────────────────────── */
-.campo-num {
+.number-field {
   display: flex;
   align-items: center;
   gap: 0;
@@ -440,19 +440,19 @@ section {
   transition: border-color 0.15s ease;
 }
 
-.campo-num:focus-within {
+.number-field:focus-within {
   border-color: var(--accent);
 }
 
-.campo-num:hover:not(:focus-within) {
+.number-field:hover:not(:focus-within) {
   border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
 }
 
-.campo-num .campo-prefixo {
+.number-field .field-prefix {
   padding-left: 12px;
 }
 
-.campo-num input {
+.number-field input {
   flex: 1;
   min-width: 0;
   background: transparent;
@@ -467,12 +467,12 @@ section {
   -moz-appearance: textfield;
 }
 
-.campo-num input:focus {
+.number-field input:focus {
   outline: none;
 }
 
-.campo-num input::-webkit-inner-spin-button,
-.campo-num input::-webkit-outer-spin-button {
+.number-field input::-webkit-inner-spin-button,
+.number-field input::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
@@ -512,31 +512,31 @@ section {
   cursor: default;
 }
 
-.grade-perfil,
-.grade-2,
-.grade-3 {
+.profile-grid,
+.grid-2,
+.grid-3 {
   display: grid;
   gap: 14px;
 }
 
-.grade-perfil {
+.profile-grid {
   grid-template-columns: repeat(3, 1fr);
 }
 
-.grade-2 {
+.grid-2 {
   grid-template-columns: 1fr 1fr;
 }
 
-.grade-3 {
+.grid-3 {
   grid-template-columns: repeat(3, 1fr);
 }
 
 @media (max-width: 720px) {
-  .grade-perfil,
-  .grade-3 {
+  .profile-grid,
+  .grid-3 {
     grid-template-columns: 1fr;
   }
-  .grade-2 {
+  .grid-2 {
     grid-template-columns: 1fr;
   }
 }
@@ -546,7 +546,7 @@ section {
   position: relative;
 }
 
-.select-botao {
+.select-button {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -565,31 +565,31 @@ section {
   transition: border-color 0.15s ease;
 }
 
-.select-botao:hover {
+.select-button:hover {
   border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
 }
 
-.select-botao:focus-visible {
+.select-button:focus-visible {
   outline: none;
   border-color: var(--accent);
 }
 
-.select-botao.aberto {
+.select-button.open {
   border-color: var(--accent);
 }
 
-.select-seta {
+.select-chevron {
   color: var(--muted);
   flex-shrink: 0;
   transition: transform 0.15s ease;
 }
 
-.select-botao.aberto .select-seta {
+.select-button.open .select-chevron {
   transform: rotate(180deg);
   color: var(--accent);
 }
 
-.select-lista {
+.select-list {
   position: absolute;
   top: calc(100% + 6px);
   left: 0;
@@ -608,16 +608,16 @@ section {
   scrollbar-color: var(--border) transparent;
 }
 
-.select-lista::-webkit-scrollbar {
+.select-list::-webkit-scrollbar {
   width: 8px;
 }
 
-.select-lista::-webkit-scrollbar-thumb {
+.select-list::-webkit-scrollbar-thumb {
   background: var(--border);
   border-radius: 4px;
 }
 
-.select-opcao {
+.select-option {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -629,79 +629,79 @@ section {
   cursor: pointer;
 }
 
-.select-opcao.ativa {
+.select-option.active {
   background: color-mix(in srgb, var(--accent) 18%, transparent);
 }
 
-.select-opcao.escolhida {
+.select-option.selected {
   color: var(--accent-deep);
   font-weight: 800;
 }
 
-.select-opcao svg {
+.select-option svg {
   color: var(--accent);
   flex-shrink: 0;
 }
 
-.bloco-opcional {
+.optional-block {
   border: 2px dashed var(--border);
   border-radius: 10px;
   padding: 14px 16px;
 }
 
-.bloco-opcional summary {
+.optional-block summary {
   cursor: pointer;
   font-weight: 800;
   color: var(--cyan);
 }
 
-.bloco-opcional[open] summary {
+.optional-block[open] summary {
   margin-bottom: 8px;
 }
 
 /* ── Resultado ──────────────────────────────────────────────── */
-.resultado {
+.results {
   display: flex;
   flex-direction: column;
   gap: 20px;
   padding: 0;
 }
 
-.destaque {
+.highlight {
   text-align: center;
   padding: 30px;
   border-color: var(--accent);
 }
 
-.destaque-legenda {
+.highlight-caption {
   color: var(--muted);
   margin: 0 0 6px;
 }
 
-.destaque-valor {
+.highlight-value {
   font-size: clamp(30px, 6vw, 46px);
   color: var(--green);
   margin: 0 0 12px;
 }
 
-.destaque-mes {
+.highlight-unit {
   font-size: 16px;
   color: var(--muted);
   margin-left: 6px;
 }
 
-.lado {
+.side {
   padding: 24px 26px;
 }
 
-.lado dl {
+.side dl {
   display: flex;
   flex-direction: column;
   gap: 12px;
   margin: 16px 0 0;
 }
 
-.lado dl div {
+.side dl div {
   display: flex;
   justify-content: space-between;
   gap: 16px;
@@ -709,45 +709,45 @@ section {
   padding-bottom: 10px;
 }
 
-.lado dl div:last-child {
+.side dl div:last-child {
   border-bottom: none;
   padding-bottom: 0;
 }
 
-.lado .nota {
+.side .note {
   margin-top: 14px;
 }
 
-.lado dt {
+.side dt {
   color: var(--muted);
   font-size: 15px;
 }
 
-.lado dd {
+.side dd {
   margin: 0;
   font-weight: 800;
   font-size: 15px;
   white-space: nowrap;
 }
 
-.lado h3 {
+.side h3 {
   margin: 0;
   font-size: 16px;
   color: var(--cyan);
 }
 
 /* ── Colchão ────────────────────────────────────────────────── */
-.colchao h3 {
+.cushion h3 {
   margin: 0 0 8px;
   font-size: 16px;
   color: var(--gold);
 }
 
-.colchao-config {
+.cushion-config {
   margin: 16px 0;
 }
 
-.colchao-itens {
+.cushion-items {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -756,34 +756,34 @@ section {
   gap: 12px;
 }
 
-.colchao-itens li {
+.cushion-items li {
   background: var(--surface-2);
   border-radius: 10px;
   padding: 12px 14px;
 }
 
-.colchao-item-topo {
+.cushion-item-top {
   display: flex;
   justify-content: space-between;
   font-size: 15px;
 }
 
-.colchao-itens .nota {
+.cushion-items .note {
   margin: 4px 0 0;
   font-size: 13.5px;
 }
 
-.colchao-total {
+.cushion-total {
   text-align: center;
   margin-top: 18px;
 }
 
-.colchao-total p:first-child {
+.cushion-total p:first-child {
   color: var(--muted);
   margin-bottom: 4px;
 }
 
-.colchao-total .destaque-valor {
+.cushion-total .highlight-value {
   color: var(--gold);
 }
 
@@ -794,12 +794,12 @@ section {
   color: var(--violet);
 }
 
-.faixa-area {
+.range-area {
   position: relative;
   margin: 44px 0 4px;
 }
 
-.faixa-voce {
+.you-chip {
   position: absolute;
   top: -32px;
   transform: translateX(-50%);
@@ -815,7 +815,7 @@ section {
   z-index: 2;
 }
 
-.faixa-voce::after {
+.you-chip::after {
   content: '';
   position: absolute;
   left: 50%;
@@ -826,23 +826,23 @@ section {
   border-bottom: none;
 }
 
-.faixa-voce[data-borda='esq'] {
+.you-chip[data-edge='left'] {
   transform: translateX(-14%);
 }
 
-.faixa-voce[data-borda='esq']::after {
+.you-chip[data-edge='left']::after {
   left: 14%;
 }
 
-.faixa-voce[data-borda='dir'] {
+.you-chip[data-edge='right'] {
   transform: translateX(-86%);
 }
 
-.faixa-voce[data-borda='dir']::after {
+.you-chip[data-edge='right']::after {
   left: 86%;
 }
 
-.faixa-barra {
+.range-bar {
   position: relative;
   height: 30px;
   background: var(--surface-2);
@@ -850,7 +850,7 @@ section {
   border: 1px solid var(--border);
 }
 
-.faixa-preenchida {
+.range-band {
   position: absolute;
   top: 2px;
   bottom: 2px;
@@ -865,7 +865,7 @@ section {
   box-shadow: 0 0 14px var(--violet-soft);
 }
 
-.faixa-centro {
+.range-center {
   position: absolute;
   top: 5px;
   bottom: 5px;
@@ -874,7 +874,7 @@ section {
   transform: translateX(-50%);
 }
 
-.faixa-marcador {
+.range-marker {
   position: absolute;
   top: -7px;
   bottom: -7px;
@@ -885,7 +885,7 @@ section {
   box-shadow: 0 0 12px var(--glow-pink), 2px 2px 0 var(--shadow);
 }
 
-.faixa-rotulos-band {
+.range-labels {
   position: relative;
   height: 44px;
   margin-top: 8px;
@@ -894,7 +894,7 @@ section {
   font-family: var(--display);
 }
 
-.faixa-limite {
+.range-bound {
   position: absolute;
   transform: translateX(-50%);
   text-align: center;
@@ -902,65 +902,65 @@ section {
   white-space: nowrap;
 }
 
-.faixa-limite:first-child {
+.range-bound:first-child {
   color: var(--text);
 }
 
-.faixa-limite:last-child {
+.range-bound:last-child {
   color: var(--text);
 }
 
-.faixa-limite-centro {
+.range-bound-center {
   color: color-mix(in srgb, var(--violet) 75%, var(--text));
 }
 
-.faixa-legenda-texto {
+.range-caption {
   margin-top: 2px;
   font-size: 13.5px;
 }
 
-.como-calculamos {
+.how-we-calculate {
   margin-top: 16px;
 }
 
-.como-calculamos summary {
+.how-we-calculate summary {
   cursor: pointer;
   color: var(--cyan);
   font-weight: 800;
 }
 
-.como-calculamos ul {
+.how-we-calculate ul {
   margin: 8px 0;
   padding-left: 20px;
   font-size: 15px;
 }
 
-.como-calculamos a {
+.how-we-calculate a {
   color: var(--link);
 }
 
 /* ── Tendências ────────────────────────────────────────────── */
-.tendencias h3 {
+.trends h3 {
   margin: 0 0 6px;
   font-size: 16px;
   color: var(--green);
 }
 
-.graficos {
+.charts {
   display: grid;
   grid-template-columns: 1fr;
   gap: 26px;
   margin: 18px 0 6px;
 }
 
-.tendencia-bloco h4 {
+.trend-block h4 {
   margin: 0;
   font-size: 14px;
   color: var(--muted);
   font-family: var(--display);
 }
 
-.grafico-cabecalho {
+.chart-header {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -968,14 +968,14 @@ section {
   margin-bottom: 6px;
 }
 
-.legenda {
+.legend {
   display: inline-flex;
   gap: 14px;
   font-size: 13px;
   color: var(--muted);
 }
 
-.legenda span {
+.legend span {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -988,11 +988,11 @@ section {
   border-radius: 3px;
 }
 
-.grafico-envolto {
+.chart-wrap {
   position: relative;
 }
 
-.grafico {
+.chart {
   width: 100%;
   height: auto;
   display: block;
@@ -1001,12 +1001,12 @@ section {
   border-radius: 10px;
 }
 
-.grade-linha {
+.chart-gridline {
   stroke: var(--border);
   stroke-width: 1;
 }
 
-.tick-ano {
+.year-tick {
   fill: var(--muted);
   font-family: var(--display);
   font-size: 10px;
@@ -1019,7 +1019,7 @@ section {
   opacity: 0.6;
 }
 
-.rotulo-serie {
+.series-label {
   fill: var(--muted);
   font-family: var(--display);
   font-size: 10px;
@@ -1029,7 +1029,7 @@ section {
   stroke-linejoin: round;
 }
 
-.rotulo-valor {
+.value-label {
   fill: var(--text);
   font-family: var(--display);
   font-size: 10.5px;
@@ -1039,7 +1039,7 @@ section {
   stroke-linejoin: round;
 }
 
-.grafico-tooltip {
+.chart-tooltip {
   position: absolute;
   top: 10px;
   transform: translateX(-50%);
@@ -1056,13 +1056,13 @@ section {
   z-index: 5;
 }
 
-.tooltip-ano {
+.tooltip-year {
   font-family: var(--display);
   font-size: 11px;
   color: var(--muted);
 }
 
-.tooltip-linha {
+.tooltip-row {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -1070,75 +1070,75 @@ section {
   color: var(--text);
 }
 
-.tooltip-linha i {
+.tooltip-row i {
   width: 8px;
   height: 8px;
   border-radius: 2px;
 }
 
-.tabela-dados {
+.data-table {
   margin-top: 14px;
 }
 
-.tabela-dados summary {
+.data-table summary {
   cursor: pointer;
   color: var(--cyan);
   font-weight: 700;
   font-size: 14px;
 }
 
-.tabela-dados table {
+.data-table table {
   margin-top: 10px;
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
 }
 
-.tabela-dados th,
-.tabela-dados td {
+.data-table th,
+.data-table td {
   text-align: right;
   padding: 6px 10px;
   border-bottom: 1px solid var(--border);
 }
 
-.tabela-dados th:first-child,
-.tabela-dados td:first-child {
+.data-table th:first-child,
+.data-table td:first-child {
   text-align: left;
   font-family: var(--display);
 }
 
-.tabela-dados th {
+.data-table th {
   color: var(--muted);
   font-weight: 700;
 }
 
-.leitura {
+.takeaway {
   font-size: 16px;
   margin-top: 14px;
 }
 
 /* ── Funil ──────────────────────────────────────────────────── */
-.funil {
+.funnel {
   padding: 0;
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-.funil h3 {
+.funnel h3 {
   margin: 0;
   font-size: 16px;
   color: var(--accent);
 }
 
-.guia-card {
+.guide-card {
   display: block;
   padding: 18px;
   text-decoration: none;
   color: var(--text);
 }
 
-.guia-card h4 {
+.guide-card h4 {
   margin: 0 0 6px;
   font-size: 15px;
 }
@@ -1158,7 +1158,7 @@ section {
 }
 
 /* ── Rodapé ─────────────────────────────────────────────────── */
-.rodape {
+.footnote {
   text-align: center;
   max-width: 760px;
   margin: 12px auto 0;
@@ -1166,24 +1166,24 @@ section {
 }
 
 /* ── Marcadores customizados de details/summary ─────── */
-.bloco-opcional summary,
-.como-calculamos summary,
-.tabela-dados summary {
+.optional-block summary,
+.how-we-calculate summary,
+.data-table summary {
   list-style: none;
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.bloco-opcional summary::-webkit-details-marker,
-.como-calculamos summary::-webkit-details-marker,
-.tabela-dados summary::-webkit-details-marker {
+.optional-block summary::-webkit-details-marker,
+.how-we-calculate summary::-webkit-details-marker,
+.data-table summary::-webkit-details-marker {
   display: none;
 }
 
-.bloco-opcional summary::before,
-.como-calculamos summary::before,
-.tabela-dados summary::before {
+.optional-block summary::before,
+.how-we-calculate summary::before,
+.data-table summary::before {
   content: '';
   width: 7px;
   height: 7px;
@@ -1194,14 +1194,14 @@ section {
   flex-shrink: 0;
 }
 
-.bloco-opcional[open] > summary::before,
-.como-calculamos[open] > summary::before,
-.tabela-dados[open] > summary::before {
+.optional-block[open] > summary::before,
+.how-we-calculate[open] > summary::before,
+.data-table[open] > summary::before {
   transform: rotate(45deg);
 }
 
 /* ── Animações ──────────────────────────────────────── */
-@keyframes entrada {
+@keyframes fade-enter {
   from {
     opacity: 0;
     transform: translateY(14px);
@@ -1212,74 +1212,74 @@ section {
   }
 }
 
-.resultado,
-.colchao,
+.results,
+.cushion,
 .benchmark,
-.tendencias,
-.funil {
-  animation: entrada 0.45s ease-out backwards;
+.trends,
+.funnel {
+  animation: fade-enter 0.45s ease-out backwards;
 }
 
-.colchao { animation-delay: 0.08s; }
+.cushion { animation-delay: 0.08s; }
 .benchmark { animation-delay: 0.16s; }
-.tendencias { animation-delay: 0.24s; }
-.funil { animation-delay: 0.32s; }
+.trends { animation-delay: 0.24s; }
+.funnel { animation-delay: 0.32s; }
 
 /* faixa desliza quando o valor muda */
-.faixa-preenchida {
+.range-band {
   transition: left 0.3s ease, width 0.3s ease;
 }
-.faixa-marcador,
-.faixa-centro,
-.faixa-voce {
+.range-marker,
+.range-center,
+.you-chip {
   transition: left 0.3s ease;
 }
 
 /* linhas dos gráficos se desenham ao entrar na tela */
-.linha-serie {
+.series-line {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
 }
-.tendencias.visivel .linha-serie {
-  animation: desenhar-linha 1.1s ease-out forwards;
+.trends.visible .series-line {
+  animation: draw-line 1.1s ease-out forwards;
 }
-@keyframes desenhar-linha {
+@keyframes draw-line {
   to {
     stroke-dashoffset: 0;
   }
 }
-.tendencias .grafico circle,
-.tendencias .rotulo-valor,
-.tendencias .rotulo-serie {
+.trends .chart circle,
+.trends .value-label,
+.trends .series-label {
   opacity: 0;
   transition: opacity 0.4s ease 0.85s;
 }
-.tendencias.visivel .grafico circle,
-.tendencias.visivel .rotulo-valor,
-.tendencias.visivel .rotulo-serie {
+.trends.visible .chart circle,
+.trends.visible .value-label,
+.trends.visible .series-label {
   opacity: 1;
 }
 
 /* dropdown abre com leve escala */
-@keyframes select-abrir {
+@keyframes select-open {
   from {
     opacity: 0;
     transform: translateY(-4px) scale(0.985);
   }
 }
-.select-lista {
-  animation: select-abrir 0.14s ease-out;
+.select-list {
+  animation: select-open 0.14s ease-out;
   transform-origin: top center;
 }
 
 /* tooltip dos gráficos */
-@keyframes tooltip-surgir {
+@keyframes tooltip-in {
   from {
     opacity: 0;
   }
 }
-.grafico-tooltip {
-  animation: tooltip-surgir 0.12s ease-out;
+.chart-tooltip {
+  animation: tooltip-in 0.12s ease-out;
 }
 
 /* acessibilidade: sem movimento para quem pediu */
@@ -1292,12 +1292,12 @@ section {
     transition-duration: 0.01ms !important;
     transition-delay: 0s !important;
   }
-  .linha-serie {
+  .series-line {
     stroke-dashoffset: 0 !important;
   }
-  .tendencias .grafico circle,
-  .tendencias .rotulo-valor,
-  .tendencias .rotulo-serie {
+  .trends .chart circle,
+  .trends .value-label,
+  .trends .series-label {
     opacity: 1 !important;
   }
 }

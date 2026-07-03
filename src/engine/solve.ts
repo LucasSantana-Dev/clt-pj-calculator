@@ -1,67 +1,67 @@
 /**
  * Conversões bidirecionais: busca binária pelo valor que iguala o líquido anual.
  */
-import { calculaClt, type CltInput, type CltResult } from './clt'
-import { calculaPj, type PjInput, type PjResult } from './pj'
-import { round2 } from './impostos'
+import { computeClt, type CltInput, type CltResult } from './clt'
+import { computePj, type PjInput, type PjResult } from './pj'
+import { round2 } from './taxes'
 
-export interface EquivalenciaCltParaPj {
+export interface CltToPjEquivalence {
   clt: CltResult
   pj: PjResult
   /** Faturamento mensal PJ que empata o líquido anual do pacote CLT. */
-  faturamentoEquivalente: number
+  equivalentRevenue: number
 }
 
-export interface EquivalenciaPjParaClt {
+export interface PjToCltEquivalence {
   pj: PjResult
   clt: CltResult
   /** Salário bruto CLT que empata o líquido anual do PJ. */
-  salarioEquivalente: number
+  equivalentSalary: number
 }
 
-function buscaBinaria(
-  alvo: number,
-  liquidoAnualDe: (x: number) => number,
-  limiteSuperiorInicial: number,
+function binarySearch(
+  target: number,
+  annualNetOf: (x: number) => number,
+  initialUpperBound: number,
 ): number {
   let lo = 0
-  let hi = limiteSuperiorInicial
-  while (liquidoAnualDe(hi) < alvo) {
+  let hi = initialUpperBound
+  while (annualNetOf(hi) < target) {
     hi *= 2
     if (hi > 10_000_000) break
   }
   for (let i = 0; i < 60; i++) {
     const mid = (lo + hi) / 2
-    if (liquidoAnualDe(mid) < alvo) lo = mid
+    if (annualNetOf(mid) < target) lo = mid
     else hi = mid
   }
   return round2((lo + hi) / 2)
 }
 
-export function cltParaPj(
-  entrada: CltInput,
-  pjOpcoes: Omit<PjInput, 'faturamentoMensal'> = {},
-): EquivalenciaCltParaPj {
-  const clt = calculaClt(entrada)
-  const faturamentoEquivalente = buscaBinaria(
-    clt.liquidoAnualTotal,
-    (f) => calculaPj({ ...pjOpcoes, faturamentoMensal: f }).liquidoAnualTotal,
-    entrada.salarioBruto * 2 + 1000,
+export function cltToPj(
+  entry: CltInput,
+  pjOptions: Omit<PjInput, 'monthlyRevenue'> = {},
+): CltToPjEquivalence {
+  const clt = computeClt(entry)
+  const equivalentRevenue = binarySearch(
+    clt.totalAnnualNet,
+    (f) => computePj({ ...pjOptions, monthlyRevenue: f }).totalAnnualNet,
+    entry.grossSalary * 2 + 1000,
   )
-  const pj = calculaPj({ ...pjOpcoes, faturamentoMensal: faturamentoEquivalente })
-  return { clt, pj, faturamentoEquivalente }
+  const pj = computePj({ ...pjOptions, monthlyRevenue: equivalentRevenue })
+  return { clt, pj, equivalentRevenue }
 }
 
-export function pjParaClt(
-  entrada: PjInput,
-  cltOpcoes: Omit<CltInput, 'salarioBruto'> = {},
-): EquivalenciaPjParaClt {
-  const pj = calculaPj(entrada)
-  const salarioEquivalente = buscaBinaria(
-    pj.liquidoAnualTotal,
-    (s) => calculaClt({ ...cltOpcoes, salarioBruto: s }).liquidoAnualTotal,
-    entrada.faturamentoMensal * 2 + 1000,
+export function pjToClt(
+  entry: PjInput,
+  cltOptions: Omit<CltInput, 'grossSalary'> = {},
+): PjToCltEquivalence {
+  const pj = computePj(entry)
+  const equivalentSalary = binarySearch(
+    pj.totalAnnualNet,
+    (s) => computeClt({ ...cltOptions, grossSalary: s }).totalAnnualNet,
+    entry.monthlyRevenue * 2 + 1000,
   )
-  const clt = calculaClt({ ...cltOpcoes, salarioBruto: salarioEquivalente })
-  return { pj, clt, salarioEquivalente }
+  const clt = computeClt({ ...cltOptions, grossSalary: equivalentSalary })
+  return { pj, clt, equivalentSalary }
 }

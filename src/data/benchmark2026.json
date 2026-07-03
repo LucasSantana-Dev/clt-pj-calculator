@@ -1,23 +1,23 @@
 {
   "meta": {
-    "fonte": "Pesquisa Código Fonte TV — 6ª edição (2026)",
+    "source": "Pesquisa Código Fonte TV — 6ª edição (2026)",
     "url": "https://pesquisa.codigofonte.com.br/2026",
-    "respondentes": 17046,
-    "periodoCampo": "2026-02-23 a 2026-06-09",
-    "transcritoEm": "2026-07-02",
-    "unidade": "R$ bruto mensal",
-    "notasMetodologia": [
+    "respondents": 17046,
+    "fieldPeriod": "2026-02-23 a 2026-06-09",
+    "transcribedAt": "2026-07-02",
+    "unit": "R$ bruto mensal",
+    "methodologyNotes": [
       "Médias por área e por experiência foram estimadas a partir das distribuições por faixa salarial publicadas (ponto médio ponderado por respondentes), não de médias diretas.",
       "A pesquisa não publica corte salarial por modalidade (remoto/híbrido/presencial); apenas distribuição de respondentes.",
       "Médias por UF e por senioridade e o corte CLT/PJ são os valores publicados pela pesquisa."
     ]
   },
-  "vinculo": {
+  "contractType": {
     "clt": 10165.98,
     "pj": 13436.23,
-    "outro": 10199.77
+    "other": 10199.77
   },
-  "senioridade": {
+  "seniority": {
     "estagio": 2586.84,
     "junior": 5060.34,
     "pleno": 8466.52,
@@ -44,35 +44,116 @@
     "outra": 11738
   },
   "uf": {
-    "SP": { "media": 11113.03, "n": 5274 },
-    "MG": { "media": 10565.64, "n": 1750 },
-    "SC": { "media": 11166.93, "n": 1409 },
-    "PR": { "media": 10160.05, "n": 1335 },
-    "RJ": { "media": 10382.38, "n": 1126 },
-    "RS": { "media": 11329.7, "n": 1010 },
-    "CE": { "media": 10348.04, "n": 692 },
-    "GO": { "media": 10084.12, "n": 562 },
-    "DF": { "media": 11796.62, "n": 542 },
-    "PE": { "media": 10318.31, "n": 505 },
-    "BA": { "media": 10609.93, "n": 498 },
-    "ES": { "media": 11147.18, "n": 317 },
-    "PB": { "media": 11120.64, "n": 258 },
-    "RN": { "media": 10730.4, "n": 224 },
-    "MS": { "media": 11810.14, "n": 176 },
-    "PI": { "media": 10179.07, "n": 126 },
-    "PA": { "media": 9431.95, "n": 124 },
-    "AM": { "media": 11459.17, "n": 121 },
-    "MT": { "media": 10894.57, "n": 118 },
-    "AL": { "media": 9047.91, "n": 116 },
-    "MA": { "media": 10047.36, "n": 96 },
-    "SE": { "media": 9258.92, "n": 89 },
-    "RO": { "media": 11307.63, "n": 70 },
-    "TO": { "media": 11583.83, "n": 60 },
-    "AC": { "media": 10250.5, "n": 16 },
-    "AP": { "media": 9156.75, "n": 16 },
-    "RR": { "media": 9350.5, "n": 10 }
+    "SP": {
+      "mean": 11113.03,
+      "n": 5274
+    },
+    "MG": {
+      "mean": 10565.64,
+      "n": 1750
+    },
+    "SC": {
+      "mean": 11166.93,
+      "n": 1409
+    },
+    "PR": {
+      "mean": 10160.05,
+      "n": 1335
+    },
+    "RJ": {
+      "mean": 10382.38,
+      "n": 1126
+    },
+    "RS": {
+      "mean": 11329.7,
+      "n": 1010
+    },
+    "CE": {
+      "mean": 10348.04,
+      "n": 692
+    },
+    "GO": {
+      "mean": 10084.12,
+      "n": 562
+    },
+    "DF": {
+      "mean": 11796.62,
+      "n": 542
+    },
+    "PE": {
+      "mean": 10318.31,
+      "n": 505
+    },
+    "BA": {
+      "mean": 10609.93,
+      "n": 498
+    },
+    "ES": {
+      "mean": 11147.18,
+      "n": 317
+    },
+    "PB": {
+      "mean": 11120.64,
+      "n": 258
+    },
+    "RN": {
+      "mean": 10730.4,
+      "n": 224
+    },
+    "MS": {
+      "mean": 11810.14,
+      "n": 176
+    },
+    "PI": {
+      "mean": 10179.07,
+      "n": 126
+    },
+    "PA": {
+      "mean": 9431.95,
+      "n": 124
+    },
+    "AM": {
+      "mean": 11459.17,
+      "n": 121
+    },
+    "MT": {
+      "mean": 10894.57,
+      "n": 118
+    },
+    "AL": {
+      "mean": 9047.91,
+      "n": 116
+    },
+    "MA": {
+      "mean": 10047.36,
+      "n": 96
+    },
+    "SE": {
+      "mean": 9258.92,
+      "n": 89
+    },
+    "RO": {
+      "mean": 11307.63,
+      "n": 70
+    },
+    "TO": {
+      "mean": 11583.83,
+      "n": 60
+    },
+    "AC": {
+      "mean": 10250.5,
+      "n": 16
+    },
+    "AP": {
+      "mean": 9156.75,
+      "n": 16
+    },
+    "RR": {
+      "mean": 9350.5,
+      "n": 10
+    }
   },
-  "experiencia": {
+  "experience": {
     "menos-1": 3706,
     "1-2": 4966,
     "2-4": 8261,
@@ -83,7 +164,7 @@
     "15-20": 18798,
     "mais-20": 21504
   },
-  "modalidadeDistribuicao": {
+  "workModeDistribution": {
     "remoto": 60.08,
     "hibrido": 22.44,
     "presencial": 17.48

@@ -12,89 +12,89 @@
  * - FGTS: 8% sobre salário, 13º e férias+terço (≈ 13,33 salários/ano);
  *   conta como parte do pacote (patrimônio do trabalhador).
  */
-import { FGTS_ALIQUOTA } from './tables2026'
-import { inssClt, irrfMensal, round2 } from './impostos'
+import { FGTS_RATE } from './tables2026'
+import { cltInss, monthlyIrrf, round2 } from './taxes'
 
 export interface CltInput {
-  salarioBruto: number
-  dependentes?: number
+  grossSalary: number
+  dependents?: number
   /** Benefícios mensais não tributáveis (VR/VA, plano, home office, educação, etc.). */
-  beneficiosMensais?: number
+  monthlyBenefits?: number
   /**
    * Custo mensal do vale-transporte pago pela empresa. Entra separado porque a
    * lei permite descontar do salário até 6% dele; o benefício líquido é só o
    * que passar disso: max(0, VT − 6% × salário).
    */
-  valeTransporteMensal?: number
+  valeTransporteMonthly?: number
   /** PLR líquida anual estimada. */
-  plrLiquidaAnual?: number
+  annualNetPlr?: number
 }
 
 export interface CltBreakdown {
-  liquidoMesNormal: number
-  liquidoMesFerias: number
-  liquido13: number
-  fgtsAnual: number
-  beneficiosAnuais: number
-  plrLiquidaAnual: number
-  inssMesNormal: number
-  irrfMesNormal: number
+  normalMonthNet: number
+  vacationMonthNet: number
+  thirteenthNet: number
+  annualFgts: number
+  annualBenefits: number
+  annualNetPlr: number
+  normalMonthInss: number
+  normalMonthIrrf: number
 }
 
 export interface CltResult {
-  liquidoAnualTotal: number
-  mediaMensal: number
+  totalAnnualNet: number
+  monthlyAverage: number
   breakdown: CltBreakdown
 }
 
-function liquidoPagamento(rendimento: number, dependentes: number): {
+function liquidoPagamento(income: number, dependents: number): {
   liquido: number
   inss: number
   irrf: number
 } {
-  const inss = inssClt(rendimento)
-  const irrf = irrfMensal({ rendimento, inss, dependentes, aplicarLei15270: true })
-  return { liquido: round2(rendimento - inss - irrf), inss, irrf }
+  const inss = cltInss(income)
+  const irrf = monthlyIrrf({ income, inss, dependents, applyLei15270: true })
+  return { liquido: round2(income - inss - irrf), inss, irrf }
 }
 
-export function calculaClt(input: CltInput): CltResult {
+export function computeClt(input: CltInput): CltResult {
   const {
-    salarioBruto,
-    dependentes = 0,
-    beneficiosMensais = 0,
-    valeTransporteMensal = 0,
-    plrLiquidaAnual = 0,
+    grossSalary,
+    dependents = 0,
+    monthlyBenefits = 0,
+    valeTransporteMonthly = 0,
+    annualNetPlr = 0,
   } = input
-  const vtLiquidoMensal = Math.max(0, valeTransporteMensal - salarioBruto * 0.06)
+  const monthlyVtNet = Math.max(0, valeTransporteMonthly - grossSalary * 0.06)
 
-  const mesNormal = liquidoPagamento(salarioBruto, dependentes)
-  const mesFerias = liquidoPagamento(salarioBruto * (4 / 3), dependentes)
-  const decimoTerceiro = liquidoPagamento(salarioBruto, dependentes)
+  const mesNormal = liquidoPagamento(grossSalary, dependents)
+  const mesFerias = liquidoPagamento(grossSalary * (4 / 3), dependents)
+  const decimoTerceiro = liquidoPagamento(grossSalary, dependents)
 
-  const fgtsAnual = round2(salarioBruto * (12 + 1 + 1 / 3) * FGTS_ALIQUOTA)
-  const beneficiosAnuais = round2((beneficiosMensais + vtLiquidoMensal) * 12)
+  const annualFgts = round2(grossSalary * (12 + 1 + 1 / 3) * FGTS_RATE)
+  const annualBenefits = round2((monthlyBenefits + monthlyVtNet) * 12)
 
-  const liquidoAnualTotal = round2(
+  const totalAnnualNet = round2(
     mesNormal.liquido * 11 +
       mesFerias.liquido +
       decimoTerceiro.liquido +
-      fgtsAnual +
-      beneficiosAnuais +
-      plrLiquidaAnual,
+      annualFgts +
+      annualBenefits +
+      annualNetPlr,
   )
 
   return {
-    liquidoAnualTotal,
-    mediaMensal: round2(liquidoAnualTotal / 12),
+    totalAnnualNet,
+    monthlyAverage: round2(totalAnnualNet / 12),
     breakdown: {
-      liquidoMesNormal: mesNormal.liquido,
-      liquidoMesFerias: mesFerias.liquido,
-      liquido13: decimoTerceiro.liquido,
-      fgtsAnual,
-      beneficiosAnuais,
-      plrLiquidaAnual,
-      inssMesNormal: mesNormal.inss,
-      irrfMesNormal: mesNormal.irrf,
+      normalMonthNet: mesNormal.liquido,
+      vacationMonthNet: mesFerias.liquido,
+      thirteenthNet: decimoTerceiro.liquido,
+      annualFgts,
+      annualBenefits,
+      annualNetPlr,
+      normalMonthInss: mesNormal.inss,
+      normalMonthIrrf: mesNormal.irrf,
     },
   }
 }

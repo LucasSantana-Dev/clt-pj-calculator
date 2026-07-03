@@ -12,62 +12,62 @@
  * - Resultado é sempre "faixa estimada" (±15% em torno da estimativa central),
  *   nunca dado observado do segmento conjunto.
  */
-import dados from '../data/benchmark2026.json'
-import { round2 } from './impostos'
+import data from '../data/benchmark2026.json'
+import { round2 } from './taxes'
 
-export type Senioridade = keyof typeof dados.senioridade
-export type Area = keyof typeof dados.area
-export type Uf = keyof typeof dados.uf
-export type Experiencia = keyof typeof dados.experiencia
-export type Vinculo = 'clt' | 'pj'
-export type Modalidade = 'remoto' | 'hibrido' | 'presencial'
+export type Seniority = keyof typeof data.seniority
+export type Area = keyof typeof data.area
+export type Uf = keyof typeof data.uf
+export type Experience = keyof typeof data.experience
+export type ContractType = 'clt' | 'pj'
+export type WorkMode = 'remoto' | 'hibrido' | 'presencial'
 
-const LARGURA_FAIXA = 0.15
+const RANGE_WIDTH = 0.15
 
-export interface PerfilBenchmark {
-  senioridade: Senioridade
+export interface BenchmarkProfile {
+  seniority: Seniority
   area: Area
   uf: Uf
-  vinculo: Vinculo
-  experiencia?: Experiencia
-  modalidade?: Modalidade
+  contractType: ContractType
+  experience?: Experience
+  workMode?: WorkMode
 }
 
-export interface FatorExplicado {
-  chave: 'base-senioridade' | 'area' | 'uf' | 'vinculo'
-  rotulo: string
-  valor: number
-  referencia: number
+export interface ExplainedFactor {
+  key: 'seniority-base' | 'area' | 'uf' | 'contract'
+  label: string
+  value: number
+  reference: number
 }
 
-export interface ContextoExplicado {
-  rotulo: string
-  texto: string
+export interface ExplainedContext {
+  label: string
+  text: string
 }
 
-export type Posicao = 'abaixo' | 'dentro' | 'acima'
+export type Position = 'below' | 'within' | 'above'
 
 export interface BenchmarkResult {
-  estimativaCentral: number
-  faixaMin: number
-  faixaMax: number
-  posicao: Posicao
-  valorComparado: number
-  fatores: FatorExplicado[]
-  contexto: ContextoExplicado[]
-  mediaNacionalGeral: number
-  fonte: typeof dados.meta
+  centralEstimate: number
+  rangeMin: number
+  rangeMax: number
+  position: Position
+  comparedValue: number
+  factors: ExplainedFactor[]
+  context: ExplainedContext[]
+  nationalAverage: number
+  source: typeof data.meta
 }
 
 /** Média nacional geral: média das UFs ponderada pelo nº de respondentes. */
-export function mediaNacionalGeral(): number {
-  const ufs = Object.values(dados.uf)
-  const somaPonderada = ufs.reduce((s, u) => s + u.media * u.n, 0)
-  const n = ufs.reduce((s, u) => s + u.n, 0)
-  return somaPonderada / n
+export function nationalAverage(): number {
+  const ufList = Object.values(data.uf)
+  const weightedSum = ufList.reduce((s, u) => s + u.mean * u.n, 0)
+  const n = ufList.reduce((s, u) => s + u.n, 0)
+  return weightedSum / n
 }
 
-const ROTULO_EXPERIENCIA: Record<Experiencia, string> = {
+const EXPERIENCE_LABEL: Record<Experience, string> = {
   'menos-1': 'menos de 1 ano',
   '1-2': '1 a 2 anos',
   '2-4': '2 a 4 anos',
@@ -79,62 +79,62 @@ const ROTULO_EXPERIENCIA: Record<Experiencia, string> = {
   'mais-20': 'mais de 20 anos',
 }
 
-export function calculaBenchmark(valorBrutoMensal: number, perfil: PerfilBenchmark): BenchmarkResult {
-  const nacional = mediaNacionalGeral()
+export function computeBenchmark(grossMonthlyValue: number, profile: BenchmarkProfile): BenchmarkResult {
+  const national = nationalAverage()
 
-  const base = dados.senioridade[perfil.senioridade]
-  const fatorArea = dados.area[perfil.area] / nacional
-  const fatorUf = dados.uf[perfil.uf].media / nacional
-  const fatorVinculo = dados.vinculo[perfil.vinculo] / nacional
+  const base = data.seniority[profile.seniority]
+  const areaFactor = data.area[profile.area] / national
+  const ufFactor = data.uf[profile.uf].mean / national
+  const contractFactor = data.contractType[profile.contractType] / national
 
-  const estimativaCentral = round2(base * fatorArea * fatorUf * fatorVinculo)
-  const faixaMin = round2(estimativaCentral * (1 - LARGURA_FAIXA))
-  const faixaMax = round2(estimativaCentral * (1 + LARGURA_FAIXA))
+  const centralEstimate = round2(base * areaFactor * ufFactor * contractFactor)
+  const rangeMin = round2(centralEstimate * (1 - RANGE_WIDTH))
+  const rangeMax = round2(centralEstimate * (1 + RANGE_WIDTH))
 
-  const posicao: Posicao =
-    valorBrutoMensal < faixaMin ? 'abaixo' : valorBrutoMensal > faixaMax ? 'acima' : 'dentro'
+  const position: Position =
+    grossMonthlyValue < rangeMin ? 'below' : grossMonthlyValue > rangeMax ? 'above' : 'within'
 
-  const fatores: FatorExplicado[] = [
+  const factors: ExplainedFactor[] = [
     {
-      chave: 'base-senioridade',
-      rotulo: `Média nacional da senioridade`,
-      valor: base,
-      referencia: nacional,
+      key: 'seniority-base',
+      label: `Média nacional da senioridade`,
+      value: base,
+      reference: national,
     },
-    { chave: 'area', rotulo: 'Ajuste pela área', valor: round4(fatorArea), referencia: dados.area[perfil.area] },
-    { chave: 'uf', rotulo: 'Ajuste pela UF', valor: round4(fatorUf), referencia: dados.uf[perfil.uf].media },
+    { key: 'area', label: 'Ajuste pela área', value: round4(areaFactor), reference: data.area[profile.area] },
+    { key: 'uf', label: 'Ajuste pela UF', value: round4(ufFactor), reference: data.uf[profile.uf].mean },
     {
-      chave: 'vinculo',
-      rotulo: perfil.vinculo === 'pj' ? 'Ajuste para PJ' : 'Ajuste para CLT',
-      valor: round4(fatorVinculo),
-      referencia: dados.vinculo[perfil.vinculo],
+      key: 'contract',
+      label: profile.contractType === 'pj' ? 'Ajuste para PJ' : 'Ajuste para CLT',
+      value: round4(contractFactor),
+      reference: data.contractType[profile.contractType],
     },
   ]
 
-  const contexto: ContextoExplicado[] = []
-  if (perfil.experiencia) {
-    contexto.push({
-      rotulo: 'Tempo de experiência',
-      texto: `Quem tem ${ROTULO_EXPERIENCIA[perfil.experiencia]} de área recebe em média R$ ${dados.experiencia[perfil.experiencia].toLocaleString('pt-BR')}. Não multiplicamos esse fator porque ele já anda junto com a senioridade.`,
+  const context: ExplainedContext[] = []
+  if (profile.experience) {
+    context.push({
+      label: 'Tempo de experiência',
+      text: `Quem tem ${EXPERIENCE_LABEL[profile.experience]} de área recebe em média R$ ${data.experience[profile.experience].toLocaleString('pt-BR')}. Não multiplicamos esse fator porque ele já anda junto com a senioridade.`,
     })
   }
-  if (perfil.modalidade) {
-    contexto.push({
-      rotulo: 'Modalidade',
-      texto: `A pesquisa não publica salário por modalidade; ${dados.modalidadeDistribuicao.remoto.toLocaleString('pt-BR')}% do mercado trabalha remoto. Trabalho remoto costuma ampliar o leque de vagas e de faixas acessíveis.`,
+  if (profile.workMode) {
+    context.push({
+      label: 'Modalidade',
+      text: `A pesquisa não publica salário por modalidade; ${data.workModeDistribution.remoto.toLocaleString('pt-BR')}% do mercado trabalha remoto. Trabalho remoto costuma ampliar o leque de vagas e de faixas acessíveis.`,
     })
   }
 
   return {
-    estimativaCentral,
-    faixaMin,
-    faixaMax,
-    posicao,
-    valorComparado: valorBrutoMensal,
-    fatores,
-    contexto,
-    mediaNacionalGeral: round2(nacional),
-    fonte: dados.meta,
+    centralEstimate,
+    rangeMin,
+    rangeMax,
+    position,
+    comparedValue: grossMonthlyValue,
+    factors,
+    context,
+    nationalAverage: round2(national),
+    source: data.meta,
   }
 }
 

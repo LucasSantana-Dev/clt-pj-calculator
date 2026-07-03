@@ -1,5 +1,5 @@
-import type { Senioridade } from '../engine/benchmark'
-import { DISCORD, GUIAS_POR_SENIORIDADE, SITE } from './opcoes'
+import type { Seniority } from '../engine/benchmark'
+import { DISCORD, GUIDES_BY_SENIORITY, SITE } from './options'
 
 function DiscordIcon() {
   return (
@@ -9,16 +9,16 @@ function DiscordIcon() {
   )
 }
 
-export function Funil({ senioridade }: { senioridade: Senioridade }) {
-  const guias = GUIAS_POR_SENIORIDADE[senioridade]
+export function Funnel({ seniority }: { seniority: Seniority }) {
+  const guides = GUIDES_BY_SENIORITY[seniority]
   return (
-    <section className="funil">
+    <section className="funnel">
       <h3 className="display">Para continuar de onde a calculadora para</h3>
-      <div className="grade-3">
-        {guias.map((g) => (
-          <a key={g.slug} className="cri-card guia-card" href={`${SITE}/guias/${g.slug}`} target="_blank" rel="noreferrer">
+      <div className="grid-3">
+        {guides.map((g) => (
+          <a key={g.slug} className="cri-card guide-card" href={`${SITE}/guias/${g.slug}`} target="_blank" rel="noreferrer">
             <h4>{g.titulo}</h4>
-            <p className="nota">{g.descricao}</p>
+            <p className="note">{g.descricao}</p>
           </a>
         ))}
       </div>

@@ -1,70 +1,70 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import { Check, ChevronDown } from 'lucide-react'
 
-export interface Opcao<T extends string> {
-  valor: T
-  rotulo: string
+export interface SelectOption<T extends string> {
+  value: T
+  label: string
 }
 
 interface Props<T extends string> {
   id: string
-  valor: T
-  opcoes: readonly Opcao<T>[]
-  aoMudar: (v: T) => void
+  value: T
+  options: readonly SelectOption<T>[]
+  onChange: (v: T) => void
 }
 
 /**
  * Select customizado (padrão listbox): o <select> nativo não deixa estilizar a
  * lista de opções, então o menu aberto é nosso, com teclado e ARIA completos.
  */
-export function Select<T extends string>({ id, valor, opcoes, aoMudar }: Props<T>) {
-  const [aberto, setAberto] = useState(false)
-  const [ativo, setAtivo] = useState(() => Math.max(0, opcoes.findIndex((o) => o.valor === valor)))
-  const raizRef = useRef<HTMLDivElement>(null)
-  const listaRef = useRef<HTMLUListElement>(null)
-  const idLista = useId()
+export function Select<T extends string>({ id, value, options, onChange }: Props<T>) {
+  const [open, setAberto] = useState(false)
+  const [activeIndex, setAtivo] = useState(() => Math.max(0, options.findIndex((o) => o.value === value)))
+  const rootRef = useRef<HTMLDivElement>(null)
+  const listRef = useRef<HTMLUListElement>(null)
+  const listId = useId()
 
-  const selecionada = opcoes.find((o) => o.valor === valor)
+  const selected = options.find((o) => o.value === value)
 
   useEffect(() => {
-    if (!aberto) return
-    const fechaFora = (e: PointerEvent) => {
-      if (!raizRef.current?.contains(e.target as Node)) setAberto(false)
+    if (!open) return
+    const closeOnOutside = (e: PointerEvent) => {
+      if (!rootRef.current?.contains(e.target as Node)) setAberto(false)
     }
-    document.addEventListener('pointerdown', fechaFora)
-    return () => document.removeEventListener('pointerdown', fechaFora)
-  }, [aberto])
+    document.addEventListener('pointerdown', closeOnOutside)
+    return () => document.removeEventListener('pointerdown', closeOnOutside)
+  }, [open])
 
   useEffect(() => {
-    if (aberto) {
-      const idx = opcoes.findIndex((o) => o.valor === valor)
+    if (open) {
+      const idx = options.findIndex((o) => o.value === value)
       setAtivo(idx >= 0 ? idx : 0)
     }
-  }, [aberto, opcoes, valor])
+  }, [open, options, value])
 
   useEffect(() => {
-    if (!aberto) return
-    listaRef.current
-      ?.querySelector<HTMLElement>(`[data-indice="${ativo}"]`)
+    if (!open) return
+    listRef.current
+      ?.querySelector<HTMLElement>(`[data-index="${activeIndex}"]`)
       ?.scrollIntoView({ block: 'nearest' })
-  }, [aberto, ativo])
+  }, [open, activeIndex])
 
-  const escolhe = (indice: number) => {
-    aoMudar(opcoes[indice].valor)
+  const choose = (index: number) => {
+    onChange(options[index].value)
     setAberto(false)
   }
 
-  const aoTeclar = (e: React.KeyboardEvent) => {
-    if (!aberto && (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Enter' || e.key === ' ')) {
+  const handleKey = (e: React.KeyboardEvent) => {
+    if (!open && (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Enter' || e.key === ' ')) {
       e.preventDefault()
       setAberto(true)
       return
     }
-    if (!aberto) return
+    if (!open) return
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault()
-        setAtivo((a) => Math.min(a + 1, opcoes.length - 1))
+        setAtivo((a) => Math.min(a + 1, options.length - 1))
         break
       case 'ArrowUp':
         e.preventDefault()
@@ -76,12 +76,12 @@ export function Select<T extends string>({ id, valor, opcoes, aoMudar }: Props<T
         break
       case 'End':
         e.preventDefault()
-        setAtivo(opcoes.length - 1)
+        setAtivo(options.length - 1)
         break
       case 'Enter':
       case ' ':
         e.preventDefault()
-        escolhe(ativo)
+        choose(activeIndex)
         break
       case 'Escape':
         e.preventDefault()
@@ -92,11 +92,11 @@ export function Select<T extends string>({ id, valor, opcoes, aoMudar }: Props<T
         break
       default: {
         if (e.key.length === 1 && /\S/.test(e.key)) {
-          const letra = e.key.toLowerCase()
-          const inicio = (ativo + 1) % opcoes.length
-          for (let passo = 0; passo < opcoes.length; passo++) {
-            const i = (inicio + passo) % opcoes.length
-            if (opcoes[i].rotulo.toLowerCase().startsWith(letra)) {
+          const letter = e.key.toLowerCase()
+          const start = (activeIndex + 1) % options.length
+          for (let step = 0; step < options.length; step++) {
+            const i = (start + step) % options.length
+            if (options[i].label.toLowerCase().startsWith(letter)) {
               setAtivo(i)
               break
             }
@@ -107,35 +107,35 @@ export function Select<T extends string>({ id, valor, opcoes, aoMudar }: Props<T
   }
 
   return (
-    <div className="select" ref={raizRef}>
+    <div className="select" ref={rootRef}>
       <button
         type="button"
         id={id}
-        className={`select-botao${aberto ? ' aberto' : ''}`}
+        className={`select-button${open ? ' open' : ''}`}
         role="combobox"
-        aria-expanded={aberto}
-        aria-controls={idLista}
+        aria-expanded={open}
+        aria-controls={listId}
         aria-haspopup="listbox"
         onClick={() => setAberto((a) => !a)}
-        onKeyDown={aoTeclar}
+        onKeyDown={handleKey}
       >
-        <span>{selecionada?.rotulo}</span>
-        <ChevronDown size={16} className="select-seta" aria-hidden="true" />
+        <span>{selected?.label}</span>
+        <ChevronDown size={16} className="select-chevron" aria-hidden="true" />
       </button>
-      {aberto && (
-        <ul className="select-lista" role="listbox" id={idLista} ref={listaRef} aria-labelledby={id}>
-          {opcoes.map((o, i) => (
+      {open && (
+        <ul className="select-list" role="listbox" id={listId} ref={listRef} aria-labelledby={id}>
+          {options.map((o, i) => (
             <li
-              key={o.valor}
+              key={o.value}
               role="option"
-              data-indice={i}
-              aria-selected={o.valor === valor}
-              className={`select-opcao${i === ativo ? ' ativa' : ''}${o.valor === valor ? ' escolhida' : ''}`}
+              data-index={i}
+              aria-selected={o.value === value}
+              className={`select-option${i === activeIndex ? ' active' : ''}${o.value === value ? ' selected' : ''}`}
               onPointerMove={() => setAtivo(i)}
-              onClick={() => escolhe(i)}
+              onClick={() => choose(i)}
             >
-              <span>{o.rotulo}</span>
-              {o.valor === valor && <Check size={14} aria-hidden="true" />}
+              <span>{o.label}</span>
+              {o.value === value && <Check size={14} aria-hidden="true" />}
             </li>
           ))}
         </ul>

@@ -1,91 +1,91 @@
 import { useMemo, useState } from 'react'
-import { cltParaPj, pjParaClt } from './engine/solve'
-import { calculaColchao, COLCHAO_PADRAO, type ColchaoInput } from './engine/colchao'
-import { calculaBenchmark } from './engine/benchmark'
-import { calculaTendencias } from './engine/tendencias'
-import { Formulario, type Entradas } from './ui/Formulario'
-import { ResultadoCltParaPj, ResultadoPjParaClt } from './ui/Resultado'
-import { Colchao } from './ui/Colchao'
+import { cltToPj, pjToClt } from './engine/solve'
+import { computeCushion, DEFAULT_CUSHION, type CushionInput } from './engine/cushion'
+import { computeBenchmark } from './engine/benchmark'
+import { computeTrends } from './engine/trends'
+import { CalcForm, type CalcInputs } from './ui/CalcForm'
+import { CltToPjResults, PjToCltResults } from './ui/Results'
+import { Cushion } from './ui/Cushion'
 import { Benchmark } from './ui/Benchmark'
-import { Tendencias } from './ui/Tendencias'
-import { Funil } from './ui/Funil'
+import { Trends } from './ui/Trends'
+import { Funnel } from './ui/Funnel'
 
-const ENTRADAS_INICIAIS: Entradas = {
-  direcao: 'clt-para-pj',
-  valor: 0,
-  dependentes: 0,
-  vrVaMensal: 0,
-  planoSaudeMensal: 0,
-  auxHomeOfficeMensal: 0,
-  valeTransporteMensal: 0,
-  auxEducacaoMensal: 0,
-  outrosBeneficiosMensais: 0,
-  plrLiquidaAnual: 0,
-  contadorMensal: 300,
-  proLaboreCustom: null,
-  senioridade: 'pleno',
+const INITIAL_INPUTS: CalcInputs = {
+  direction: 'clt-to-pj',
+  value: 0,
+  dependents: 0,
+  vrVaMonthly: 0,
+  monthlyHealthPlan: 0,
+  homeOfficeAllowanceMonthly: 0,
+  valeTransporteMonthly: 0,
+  educationAllowanceMonthly: 0,
+  otherBenefitsMonthly: 0,
+  annualNetPlr: 0,
+  monthlyAccountant: 300,
+  customProLabore: null,
+  seniority: 'pleno',
   area: 'backend',
   uf: 'SP',
-  modalidade: 'remoto',
-  experiencia: '4-6',
+  workMode: 'remoto',
+  experience: '4-6',
 }
 
 export default function App() {
-  const [entradas, setEntradas] = useState<Entradas>(ENTRADAS_INICIAIS)
-  const [colchaoConfig, setColchaoConfig] = useState<Required<ColchaoInput>>(COLCHAO_PADRAO)
+  const [inputs, setInputs] = useState<CalcInputs>(INITIAL_INPUTS)
+  const [cushionConfig, setCushionConfig] = useState<Required<CushionInput>>(DEFAULT_CUSHION)
 
-  const temValor = entradas.valor >= 1000
+  const hasValue = inputs.value >= 1000
 
-  const resultado = useMemo(() => {
-    if (!temValor) return null
-    const pjOpcoes = {
-      contadorMensal: entradas.contadorMensal,
-      dependentes: entradas.dependentes,
-      ...(entradas.proLaboreCustom ? { proLaboreCustom: entradas.proLaboreCustom } : {}),
+  const result = useMemo(() => {
+    if (!hasValue) return null
+    const pjOptions = {
+      monthlyAccountant: inputs.monthlyAccountant,
+      dependents: inputs.dependents,
+      ...(inputs.customProLabore ? { customProLabore: inputs.customProLabore } : {}),
     }
     // Benefícios seguem a modalidade: home office só fora do presencial,
     // vale-transporte só fora do remoto (o desconto de 6% fica no motor).
-    const cltOpcoes = {
-      dependentes: entradas.dependentes,
-      beneficiosMensais:
-        entradas.vrVaMensal +
-        entradas.planoSaudeMensal +
-        entradas.auxEducacaoMensal +
-        entradas.outrosBeneficiosMensais +
-        (entradas.modalidade !== 'presencial' ? entradas.auxHomeOfficeMensal : 0),
-      valeTransporteMensal: entradas.modalidade !== 'remoto' ? entradas.valeTransporteMensal : 0,
-      plrLiquidaAnual: entradas.plrLiquidaAnual,
+    const cltOptions = {
+      dependents: inputs.dependents,
+      monthlyBenefits:
+        inputs.vrVaMonthly +
+        inputs.monthlyHealthPlan +
+        inputs.educationAllowanceMonthly +
+        inputs.otherBenefitsMonthly +
+        (inputs.workMode !== 'presencial' ? inputs.homeOfficeAllowanceMonthly : 0),
+      valeTransporteMonthly: inputs.workMode !== 'remoto' ? inputs.valeTransporteMonthly : 0,
+      annualNetPlr: inputs.annualNetPlr,
     }
-    if (entradas.direcao === 'clt-para-pj') {
+    if (inputs.direction === 'clt-to-pj') {
       return {
-        tipo: 'clt-para-pj' as const,
-        eq: cltParaPj({ salarioBruto: entradas.valor, ...cltOpcoes }, pjOpcoes),
+        kind: 'clt-to-pj' as const,
+        eq: cltToPj({ grossSalary: inputs.value, ...cltOptions }, pjOptions),
       }
     }
     return {
-      tipo: 'pj-para-clt' as const,
-      eq: pjParaClt({ ...pjOpcoes, faturamentoMensal: entradas.valor }, cltOpcoes),
+      kind: 'pj-to-clt' as const,
+      eq: pjToClt({ ...pjOptions, monthlyRevenue: inputs.value }, cltOptions),
     }
-  }, [entradas, temValor])
+  }, [inputs, hasValue])
 
-  const colchao = useMemo(() => {
-    if (!resultado || resultado.tipo !== 'clt-para-pj') return null
-    return calculaColchao(resultado.eq.faturamentoEquivalente, colchaoConfig)
-  }, [resultado, colchaoConfig])
+  const cushion = useMemo(() => {
+    if (!result || result.kind !== 'clt-to-pj') return null
+    return computeCushion(result.eq.equivalentRevenue, cushionConfig)
+  }, [result, cushionConfig])
 
   const benchmark = useMemo(() => {
-    if (!temValor) return null
-    return calculaBenchmark(entradas.valor, {
-      senioridade: entradas.senioridade,
-      area: entradas.area,
-      uf: entradas.uf,
-      vinculo: entradas.direcao === 'clt-para-pj' ? 'clt' : 'pj',
-      experiencia: entradas.experiencia,
-      modalidade: entradas.modalidade,
+    if (!hasValue) return null
+    return computeBenchmark(inputs.value, {
+      seniority: inputs.seniority,
+      area: inputs.area,
+      uf: inputs.uf,
+      contractType: inputs.direction === 'clt-to-pj' ? 'clt' : 'pj',
+      experience: inputs.experience,
+      workMode: inputs.workMode,
     })
-  }, [entradas, temValor])
+  }, [inputs, hasValue])
 
-  const tendencias = useMemo(() => calculaTendencias(entradas.senioridade), [entradas.senioridade])
+  const trends = useMemo(() => computeTrends(inputs.seniority), [inputs.seniority])
 
   return (
     <div>
@@ -105,38 +105,38 @@ export default function App() {
         </div>
       </header>
 
-      <div className="pagina">
-        <header className="cabecalho">
-          <p className="display marca">CALCULADORA</p>
+      <div className="page">
+        <header className="hero">
+          <p className="display eyebrow">CALCULADORA</p>
           <h1 className="display">CLT x PJ</h1>
-          <p className="subtitulo">
+          <p className="subtitle">
             Uma proposta PJ que parece maior nem sempre é. Aqui você compara os dois vínculos com a
-            matemática completa de 2026, vê a faixa de mercado para o seu perfil e recebe o valor com
+            matemática completa de 2026, vê a faixa de mercado para o seu profile e recebe o valor com
             calma, sem hype.
           </p>
         </header>
 
-        <Formulario entradas={entradas} aoMudar={setEntradas} />
+        <CalcForm inputs={inputs} onChange={setInputs} />
 
-        {!temValor && (
-          <p className="aguardando nota">
+        {!hasValue && (
+          <p className="waiting note">
             Informe o valor da proposta acima para ver a comparação completa.
           </p>
         )}
 
-        {resultado?.tipo === 'clt-para-pj' && (
+        {result?.kind === 'clt-to-pj' && (
           <>
-            <ResultadoCltParaPj eq={resultado.eq} />
-            {colchao && <Colchao resultado={colchao} config={colchaoConfig} aoMudar={setColchaoConfig} />}
+            <CltToPjResults eq={result.eq} />
+            {cushion && <Cushion result={cushion} config={cushionConfig} onChange={setCushionConfig} />}
           </>
         )}
-        {resultado?.tipo === 'pj-para-clt' && <ResultadoPjParaClt eq={resultado.eq} />}
+        {result?.kind === 'pj-to-clt' && <PjToCltResults eq={result.eq} />}
 
-        {benchmark && <Benchmark resultado={benchmark} />}
-        {temValor && <Tendencias dados={tendencias} />}
-        {temValor && <Funil senioridade={entradas.senioridade} />}
+        {benchmark && <Benchmark result={benchmark} />}
+        {hasValue && <Trends data={trends} />}
+        {hasValue && <Funnel seniority={inputs.seniority} />}
 
-        <footer className="rodape nota">
+        <footer className="footnote note">
           <p>
             Cálculo 100% no seu navegador: nenhum valor que você digita sai desta página. Parâmetros
             fiscais de 2026 (INSS, IRRF com a Lei 15.270, Simples Nacional Anexos III e V, fator R).
@@ -161,7 +161,7 @@ export default function App() {
             <a href="https://criativaria.com/sobre">Sobre a Criativaria</a>
           </div>
           <p className="footer-legal">
-            Criativaria · conteúdo aberto sob CC BY-SA 4.0 · feito pela comunidade
+            Criativaria · conteúdo open sob CC BY-SA 4.0 · feito pela comunidade
           </p>
         </div>
       </footer>

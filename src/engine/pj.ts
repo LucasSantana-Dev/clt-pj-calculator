@@ -19,119 +19,119 @@
  * Vence a de maior líquido anual; pró-labore customizado desativa a otimização.
  */
 import {
-  FATOR_R_LIMIAR,
-  INSS_PRO_LABORE_ALIQUOTA,
-  INSS_TETO,
-  SALARIO_MINIMO,
-  SIMPLES_ANEXO_III,
-  SIMPLES_ANEXO_V,
-  CONTADOR_MENSAL_PADRAO,
-  type FaixaSimples,
+  FATOR_R_THRESHOLD,
+  INSS_PRO_LABORE_RATE,
+  INSS_CEILING,
+  MINIMUM_WAGE,
+  SIMPLES_ANNEX_III,
+  SIMPLES_ANNEX_V,
+  DEFAULT_MONTHLY_ACCOUNTANT,
+  type SimplesBracket,
 } from './tables2026'
-import { irrfMensal, round2 } from './impostos'
+import { monthlyIrrf, round2 } from './taxes'
 
-export type Anexo = 'III' | 'V'
+export type Annex = 'III' | 'V'
 
 export interface PjInput {
-  faturamentoMensal: number
+  monthlyRevenue: number
   /** Pró-labore mensal customizado; se ausente, o motor otimiza. */
-  proLaboreCustom?: number
-  contadorMensal?: number
-  dependentes?: number
+  customProLabore?: number
+  monthlyAccountant?: number
+  dependents?: number
 }
 
 export interface PjResult {
-  liquidoAnualTotal: number
-  mediaMensal: number
-  anexo: Anexo
+  totalAnnualNet: number
+  monthlyAverage: number
+  annex: Annex
   fatorR: number
   proLabore: number
-  estrategia: 'pro-labore-minimo' | 'fator-r-28' | 'customizado'
+  strategy: 'min-pro-labore' | 'fator-r-28' | 'custom'
   breakdown: {
-    dasMensal: number
-    aliquotaEfetiva: number
-    inssProLabore: number
-    irrfProLabore: number
-    contadorMensal: number
-    lucrosDistribuidosMensais: number
+    monthlyDas: number
+    effectiveRate: number
+    proLaboreInss: number
+    proLaboreIrrf: number
+    monthlyAccountant: number
+    monthlyDistributedProfits: number
   }
 }
 
-export function aliquotaEfetiva(rbt12: number, tabela: FaixaSimples[]): number {
-  const faixa = tabela.find((f) => rbt12 <= f.rbt12Ate) ?? tabela[tabela.length - 1]
-  return (rbt12 * faixa.aliquotaNominal - faixa.parcelaDeduzir) / rbt12
+export function effectiveRate(rbt12: number, tabela: SimplesBracket[]): number {
+  const bracket = tabela.find((f) => rbt12 <= f.rbt12UpTo) ?? tabela[tabela.length - 1]
+  return (rbt12 * bracket.nominalRate - bracket.deductionAmount) / rbt12
 }
 
-function avaliaCenario(
-  faturamentoMensal: number,
+function evaluateScenario(
+  monthlyRevenue: number,
   proLabore: number,
-  contadorMensal: number,
-  dependentes: number,
-): Omit<PjResult, 'estrategia'> {
-  const rbt12 = faturamentoMensal * 12
-  const folha12m = proLabore * 12
-  const fatorR = folha12m / rbt12
-  const anexo: Anexo = fatorR >= FATOR_R_LIMIAR ? 'III' : 'V'
-  const tabela = anexo === 'III' ? SIMPLES_ANEXO_III : SIMPLES_ANEXO_V
+  monthlyAccountant: number,
+  dependents: number,
+): Omit<PjResult, 'strategy'> {
+  const rbt12 = monthlyRevenue * 12
+  const payroll12m = proLabore * 12
+  const fatorR = payroll12m / rbt12
+  const annex: Annex = fatorR >= FATOR_R_THRESHOLD ? 'III' : 'V'
+  const tabela = annex === 'III' ? SIMPLES_ANNEX_III : SIMPLES_ANNEX_V
 
-  const efetiva = aliquotaEfetiva(rbt12, tabela)
-  const dasMensal = round2(faturamentoMensal * efetiva)
+  const efetiva = effectiveRate(rbt12, tabela)
+  const monthlyDas = round2(monthlyRevenue * efetiva)
 
-  const inssProLabore = round2(Math.min(proLabore, INSS_TETO) * INSS_PRO_LABORE_ALIQUOTA)
-  const irrfProLabore = irrfMensal({
-    rendimento: proLabore,
-    inss: inssProLabore,
-    dependentes,
-    aplicarLei15270: false,
+  const proLaboreInss = round2(Math.min(proLabore, INSS_CEILING) * INSS_PRO_LABORE_RATE)
+  const proLaboreIrrf = monthlyIrrf({
+    income: proLabore,
+    inss: proLaboreInss,
+    dependents,
+    applyLei15270: false,
   })
 
-  const liquidoMensal = faturamentoMensal - dasMensal - contadorMensal - inssProLabore - irrfProLabore
-  const liquidoAnualTotal = round2(liquidoMensal * 12)
+  const liquidoMensal = monthlyRevenue - monthlyDas - monthlyAccountant - proLaboreInss - proLaboreIrrf
+  const totalAnnualNet = round2(liquidoMensal * 12)
 
   return {
-    liquidoAnualTotal,
-    mediaMensal: round2(liquidoMensal),
-    anexo,
+    totalAnnualNet,
+    monthlyAverage: round2(liquidoMensal),
+    annex,
     fatorR,
     proLabore,
     breakdown: {
-      dasMensal,
-      aliquotaEfetiva: efetiva,
-      inssProLabore,
-      irrfProLabore,
-      contadorMensal,
-      lucrosDistribuidosMensais: round2(faturamentoMensal - dasMensal - contadorMensal - proLabore),
+      monthlyDas,
+      effectiveRate: efetiva,
+      proLaboreInss,
+      proLaboreIrrf,
+      monthlyAccountant,
+      monthlyDistributedProfits: round2(monthlyRevenue - monthlyDas - monthlyAccountant - proLabore),
     },
   }
 }
 
-export function calculaPj(input: PjInput): PjResult {
+export function computePj(input: PjInput): PjResult {
   const {
-    faturamentoMensal,
-    proLaboreCustom,
-    contadorMensal = CONTADOR_MENSAL_PADRAO,
-    dependentes = 0,
+    monthlyRevenue,
+    customProLabore,
+    monthlyAccountant = DEFAULT_MONTHLY_ACCOUNTANT,
+    dependents = 0,
   } = input
 
-  if (proLaboreCustom !== undefined) {
+  if (customProLabore !== undefined) {
     return {
-      ...avaliaCenario(faturamentoMensal, proLaboreCustom, contadorMensal, dependentes),
-      estrategia: 'customizado',
+      ...evaluateScenario(monthlyRevenue, customProLabore, monthlyAccountant, dependents),
+      strategy: 'custom',
     }
   }
 
-  const minimo = avaliaCenario(faturamentoMensal, SALARIO_MINIMO, contadorMensal, dependentes)
+  const minimo = evaluateScenario(monthlyRevenue, MINIMUM_WAGE, monthlyAccountant, dependents)
   // Arredonda o pró-labore para cima (centavo) para garantir fator R ≥ 28%;
   // arredondar para baixo derrubaria o cenário para o Anexo V por 0,000001.
-  const proLabore28 = Math.ceil((faturamentoMensal * FATOR_R_LIMIAR - 1e-9) * 100) / 100
-  const fatorR28 = avaliaCenario(
-    faturamentoMensal,
-    Math.max(SALARIO_MINIMO, proLabore28),
-    contadorMensal,
-    dependentes,
+  const proLabore28 = Math.ceil((monthlyRevenue * FATOR_R_THRESHOLD - 1e-9) * 100) / 100
+  const fatorR28 = evaluateScenario(
+    monthlyRevenue,
+    Math.max(MINIMUM_WAGE, proLabore28),
+    monthlyAccountant,
+    dependents,
   )
 
-  return minimo.liquidoAnualTotal >= fatorR28.liquidoAnualTotal
-    ? { ...minimo, estrategia: 'pro-labore-minimo' }
-    : { ...fatorR28, estrategia: 'fator-r-28' }
+  return minimo.totalAnnualNet >= fatorR28.totalAnnualNet
+    ? { ...minimo, strategy: 'min-pro-labore' }
+    : { ...fatorR28, strategy: 'fator-r-28' }
 }

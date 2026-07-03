@@ -5,33 +5,33 @@ import { useEffect, useRef, useState } from 'react'
  * seguintes atualizam direto para não virar ruído enquanto a pessoa digita.
  * Respeita prefers-reduced-motion.
  */
-function useNumeroAnimado(alvo: number): number {
-  const [valor, setValor] = useState(0)
-  const jaMontado = useRef(false)
+function useAnimatedNumber(target: number): number {
+  const [value, setValor] = useState(0)
+  const mountedRef = useRef(false)
 
   useEffect(() => {
-    if (jaMontado.current || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      jaMontado.current = true
-      setValor(alvo)
+    if (mountedRef.current || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      mountedRef.current = true
+      setValor(target)
       return
     }
-    jaMontado.current = true
-    const inicio = performance.now()
-    const duracao = 700
+    mountedRef.current = true
+    const start = performance.now()
+    const duration = 700
     let raf = 0
-    const passo = (t: number) => {
-      const progresso = Math.min(1, (t - inicio) / duracao)
-      const suavizado = 1 - Math.pow(1 - progresso, 3)
-      setValor(alvo * suavizado)
-      if (progresso < 1) raf = requestAnimationFrame(passo)
+    const step = (t: number) => {
+      const progress = Math.min(1, (t - start) / duration)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      setValor(target * eased)
+      if (progress < 1) raf = requestAnimationFrame(step)
     }
-    raf = requestAnimationFrame(passo)
+    raf = requestAnimationFrame(step)
     return () => cancelAnimationFrame(raf)
-  }, [alvo])
+  }, [target])
 
-  return valor
+  return value
 }
 
-export function CountUp({ valor, formato }: { valor: number; formato: (v: number) => string }) {
-  return <>{formato(useNumeroAnimado(valor))}</>
+export function CountUp({ value, format }: { value: number; format: (v: number) => string }) {
+  return <>{format(useAnimatedNumber(value))}</>
 }

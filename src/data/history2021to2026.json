@@ -1,0 +1,110 @@
+{
+  "meta": {
+    "source": "Pesquisa Código Fonte TV — edições 2021 a 2026",
+    "url": "https://pesquisa.codigofonte.com.br/",
+    "transcribedAt": "2026-07-02",
+    "unit": "R$ bruto mensal (médias por ponto médio de faixa, ponderadas por respondentes)",
+    "notes": [
+      "Edições 2021-2023 não separavam Especialista/Tech Lead; o nível aparecia como 'Outro' e fica nulo aqui.",
+      "Valores nominais, sem correção por inflação."
+    ]
+  },
+  "editions": [
+    {
+      "year": 2021,
+      "respondents": 11441,
+      "contractType": {
+        "clt": 5286,
+        "pj": 7688,
+        "other": 4205
+      },
+      "seniority": {
+        "estagio": 1324,
+        "junior": 2958,
+        "pleno": 5594,
+        "senior": 10601,
+        "especialista": null
+      }
+    },
+    {
+      "year": 2022,
+      "respondents": 11521,
+      "contractType": {
+        "clt": 6712,
+        "pj": 11447,
+        "other": 6976
+      },
+      "seniority": {
+        "estagio": 1776,
+        "junior": 3663,
+        "pleno": 7400,
+        "senior": 14630,
+        "especialista": null
+      }
+    },
+    {
+      "year": 2023,
+      "respondents": 17818,
+      "contractType": {
+        "clt": 7540,
+        "pj": 12062,
+        "other": 6835
+      },
+      "seniority": {
+        "estagio": 1622,
+        "junior": 3987,
+        "pleno": 8023,
+        "senior": 15510,
+        "especialista": null
+      }
+    },
+    {
+      "year": 2024,
+      "respondents": 15049,
+      "contractType": {
+        "clt": 8022.89,
+        "pj": 12418.85,
+        "other": 6767.38
+      },
+      "seniority": {
+        "estagio": 1748.97,
+        "junior": 4079.01,
+        "pleno": 7850.47,
+        "senior": 15050.46,
+        "especialista": 18202.92
+      }
+    },
+    {
+      "year": 2025,
+      "respondents": 12510,
+      "contractType": {
+        "clt": 8925,
+        "pj": 13694,
+        "other": 8131
+      },
+      "seniority": {
+        "estagio": 1743,
+        "junior": 4154,
+        "pleno": 7844,
+        "senior": 15904,
+        "especialista": 19779
+      }
+    },
+    {
+      "year": 2026,
+      "respondents": 17046,
+      "contractType": {
+        "clt": 10165.98,
+        "pj": 13436.23,
+        "other": 10199.77
+      },
+      "seniority": {
+        "estagio": 2586.84,
+        "junior": 5060.34,
+        "pleno": 8466.52,
+        "senior": 14607.85,
+        "especialista": 20601.64
+      }
+    }
+  ]
+}

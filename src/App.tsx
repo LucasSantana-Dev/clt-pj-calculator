@@ -9,6 +9,7 @@ import { Cushion } from './ui/Cushion'
 import { Benchmark } from './ui/Benchmark'
 import { Trends } from './ui/Trends'
 import { Funnel } from './ui/Funnel'
+import { Sources } from './ui/Sources'
 
 const INITIAL_INPUTS: CalcInputs = {
   direction: 'clt-to-pj',
@@ -135,6 +136,8 @@ export default function App() {
         {benchmark && <Benchmark result={benchmark} />}
         {hasValue && <Trends data={trends} />}
         {hasValue && <Funnel seniority={inputs.seniority} />}
+
+        <Sources />
 
         <footer className="footnote note">
           <p>

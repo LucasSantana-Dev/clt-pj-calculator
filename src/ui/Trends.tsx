@@ -154,7 +154,13 @@ export function Trends({ data }: { data: TrendsData }) {
   return (
     <section ref={sectionRef} className={`cri-card-flat trends${visible ? ' visible' : ''}`}>
       <h3 className="display">Para onde o mercado está indo</h3>
-      <p className="note">Séries das seis edições da pesquisa (2021 a 2026), em valores nominais.</p>
+      <p className="note">
+        Séries das seis edições da{' '}
+        <a href="https://pesquisa.codigofonte.com.br" target="_blank" rel="noreferrer">
+          Pesquisa Código Fonte TV
+        </a>{' '}
+        (2021 a 2026), em valores nominais.
+      </p>
 
       <div className="charts">
         <div className="trend-block">

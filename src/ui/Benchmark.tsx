@@ -21,18 +21,43 @@ export function Benchmark({ resultado }: { resultado: BenchmarkResult }) {
         Seu valor bruto de {brl(valorComparado)} está <strong>{TEXTO_POSICAO[posicao]}</strong>
       </p>
 
-      <div className="faixa-barra" role="img" aria-label={`Faixa estimada de ${brl(faixaMin)} a ${brl(faixaMax)}`}>
+      <div
+        className="faixa-area"
+        role="img"
+        aria-label={`Faixa estimada de ${brl(faixaMin)} a ${brl(faixaMax)}, centro ${brl(estimativaCentral)}; seu valor: ${brl(valorComparado)}`}
+      >
         <div
-          className="faixa-preenchida"
-          style={{ left: `${posPct(faixaMin)}%`, width: `${posPct(faixaMax) - posPct(faixaMin)}%` }}
-        />
-        <div className="faixa-marcador" style={{ left: `${posPct(valorComparado)}%` }} title={brl(valorComparado)} />
+          className="faixa-voce"
+          style={{ left: `${posPct(valorComparado)}%` }}
+          data-borda={posPct(valorComparado) < 14 ? 'esq' : posPct(valorComparado) > 86 ? 'dir' : undefined}
+        >
+          você: {brl(valorComparado)}
+        </div>
+        <div className="faixa-barra">
+          <div
+            className="faixa-preenchida"
+            style={{ left: `${posPct(faixaMin)}%`, width: `${posPct(faixaMax) - posPct(faixaMin)}%` }}
+          />
+          <div className="faixa-centro" style={{ left: `${posPct(estimativaCentral)}%` }} />
+          <div className="faixa-marcador" style={{ left: `${posPct(valorComparado)}%` }} />
+        </div>
+        <div className="faixa-rotulos-band">
+          <span className="faixa-limite" style={{ left: `${posPct(faixaMin)}%` }}>
+            {brl(faixaMin)}
+          </span>
+          <span className="faixa-limite faixa-limite-centro" style={{ left: `${posPct(estimativaCentral)}%` }}>
+            centro
+            <br />
+            {brl(estimativaCentral)}
+          </span>
+          <span className="faixa-limite" style={{ left: `${posPct(faixaMax)}%` }}>
+            {brl(faixaMax)}
+          </span>
+        </div>
       </div>
-      <div className="faixa-rotulos">
-        <span>{brl(faixaMin)}</span>
-        <span className="faixa-central">faixa estimada (centro: {brl(estimativaCentral)})</span>
-        <span>{brl(faixaMax)}</span>
-      </div>
+      <p className="faixa-legenda-texto nota">
+        A área roxa é a faixa estimada para o seu perfil; o marcador rosa é o valor que você informou.
+      </p>
 
       <details className="como-calculamos">
         <summary>Como calculamos essa faixa</summary>

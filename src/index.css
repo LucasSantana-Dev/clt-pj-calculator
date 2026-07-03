@@ -1199,3 +1199,105 @@ section {
 .tabela-dados[open] > summary::before {
   transform: rotate(45deg);
 }
+
+/* ── Animações ──────────────────────────────────────── */
+@keyframes entrada {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.resultado,
+.colchao,
+.benchmark,
+.tendencias,
+.funil {
+  animation: entrada 0.45s ease-out backwards;
+}
+
+.colchao { animation-delay: 0.08s; }
+.benchmark { animation-delay: 0.16s; }
+.tendencias { animation-delay: 0.24s; }
+.funil { animation-delay: 0.32s; }
+
+/* faixa desliza quando o valor muda */
+.faixa-preenchida {
+  transition: left 0.3s ease, width 0.3s ease;
+}
+.faixa-marcador,
+.faixa-centro,
+.faixa-voce {
+  transition: left 0.3s ease;
+}
+
+/* linhas dos gráficos se desenham ao entrar na tela */
+.linha-serie {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+.tendencias.visivel .linha-serie {
+  animation: desenhar-linha 1.1s ease-out forwards;
+}
+@keyframes desenhar-linha {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.tendencias .grafico circle,
+.tendencias .rotulo-valor,
+.tendencias .rotulo-serie {
+  opacity: 0;
+  transition: opacity 0.4s ease 0.85s;
+}
+.tendencias.visivel .grafico circle,
+.tendencias.visivel .rotulo-valor,
+.tendencias.visivel .rotulo-serie {
+  opacity: 1;
+}
+
+/* dropdown abre com leve escala */
+@keyframes select-abrir {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.985);
+  }
+}
+.select-lista {
+  animation: select-abrir 0.14s ease-out;
+  transform-origin: top center;
+}
+
+/* tooltip dos gráficos */
+@keyframes tooltip-surgir {
+  from {
+    opacity: 0;
+  }
+}
+.grafico-tooltip {
+  animation: tooltip-surgir 0.12s ease-out;
+}
+
+/* acessibilidade: sem movimento para quem pediu */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
+  .linha-serie {
+    stroke-dashoffset: 0 !important;
+  }
+  .tendencias .grafico circle,
+  .tendencias .rotulo-valor,
+  .tendencias .rotulo-serie {
+    opacity: 1 !important;
+  }
+}

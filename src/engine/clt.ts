@@ -18,8 +18,14 @@ import { inssClt, irrfMensal, round2 } from './impostos'
 export interface CltInput {
   salarioBruto: number
   dependentes?: number
-  /** Benefícios mensais não tributáveis (VR/VA, plano pago pela empresa, etc.). */
+  /** Benefícios mensais não tributáveis (VR/VA, plano, home office, educação, etc.). */
   beneficiosMensais?: number
+  /**
+   * Custo mensal do vale-transporte pago pela empresa. Entra separado porque a
+   * lei permite descontar do salário até 6% dele; o benefício líquido é só o
+   * que passar disso: max(0, VT − 6% × salário).
+   */
+  valeTransporteMensal?: number
   /** PLR líquida anual estimada. */
   plrLiquidaAnual?: number
 }
@@ -52,14 +58,21 @@ function liquidoPagamento(rendimento: number, dependentes: number): {
 }
 
 export function calculaClt(input: CltInput): CltResult {
-  const { salarioBruto, dependentes = 0, beneficiosMensais = 0, plrLiquidaAnual = 0 } = input
+  const {
+    salarioBruto,
+    dependentes = 0,
+    beneficiosMensais = 0,
+    valeTransporteMensal = 0,
+    plrLiquidaAnual = 0,
+  } = input
+  const vtLiquidoMensal = Math.max(0, valeTransporteMensal - salarioBruto * 0.06)
 
   const mesNormal = liquidoPagamento(salarioBruto, dependentes)
   const mesFerias = liquidoPagamento(salarioBruto * (4 / 3), dependentes)
   const decimoTerceiro = liquidoPagamento(salarioBruto, dependentes)
 
   const fgtsAnual = round2(salarioBruto * (12 + 1 + 1 / 3) * FGTS_ALIQUOTA)
-  const beneficiosAnuais = round2(beneficiosMensais * 12)
+  const beneficiosAnuais = round2((beneficiosMensais + vtLiquidoMensal) * 12)
 
   const liquidoAnualTotal = round2(
     mesNormal.liquido * 11 +

@@ -1,6 +1,7 @@
 import type { ColchaoInput, ColchaoResult } from '../engine/colchao'
 import { brl, brlExato, pct } from './formato'
 import { CampoNumero } from './CampoNumero'
+import { CountUp } from './CountUp'
 
 interface Props {
   resultado: ColchaoResult
@@ -81,7 +82,7 @@ export function Colchao({ resultado, config, aoMudar }: Props) {
           Com colchão de {pct(resultado.percentual)} sobre a equivalência, o faturamento que sustenta a troca é
         </p>
         <p className="destaque-valor display">
-          {brl(resultado.faturamentoRecomendado)}
+          <CountUp valor={resultado.faturamentoRecomendado} formato={brl} />
           <span className="destaque-mes">/mês</span>
         </p>
       </div>

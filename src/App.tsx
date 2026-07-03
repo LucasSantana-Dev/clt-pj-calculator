@@ -14,7 +14,12 @@ const ENTRADAS_INICIAIS: Entradas = {
   direcao: 'clt-para-pj',
   valor: 0,
   dependentes: 0,
-  beneficiosMensais: 0,
+  vrVaMensal: 0,
+  planoSaudeMensal: 0,
+  auxHomeOfficeMensal: 0,
+  valeTransporteMensal: 0,
+  auxEducacaoMensal: 0,
+  outrosBeneficiosMensais: 0,
   plrLiquidaAnual: 0,
   contadorMensal: 300,
   proLaboreCustom: null,
@@ -38,26 +43,28 @@ export default function App() {
       dependentes: entradas.dependentes,
       ...(entradas.proLaboreCustom ? { proLaboreCustom: entradas.proLaboreCustom } : {}),
     }
+    // Benefícios seguem a modalidade: home office só fora do presencial,
+    // vale-transporte só fora do remoto (o desconto de 6% fica no motor).
+    const cltOpcoes = {
+      dependentes: entradas.dependentes,
+      beneficiosMensais:
+        entradas.vrVaMensal +
+        entradas.planoSaudeMensal +
+        entradas.auxEducacaoMensal +
+        entradas.outrosBeneficiosMensais +
+        (entradas.modalidade !== 'presencial' ? entradas.auxHomeOfficeMensal : 0),
+      valeTransporteMensal: entradas.modalidade !== 'remoto' ? entradas.valeTransporteMensal : 0,
+      plrLiquidaAnual: entradas.plrLiquidaAnual,
+    }
     if (entradas.direcao === 'clt-para-pj') {
       return {
         tipo: 'clt-para-pj' as const,
-        eq: cltParaPj(
-          {
-            salarioBruto: entradas.valor,
-            dependentes: entradas.dependentes,
-            beneficiosMensais: entradas.beneficiosMensais,
-            plrLiquidaAnual: entradas.plrLiquidaAnual,
-          },
-          pjOpcoes,
-        ),
+        eq: cltParaPj({ salarioBruto: entradas.valor, ...cltOpcoes }, pjOpcoes),
       }
     }
     return {
       tipo: 'pj-para-clt' as const,
-      eq: pjParaClt(
-        { ...pjOpcoes, faturamentoMensal: entradas.valor },
-        { dependentes: entradas.dependentes },
-      ),
+      eq: pjParaClt({ ...pjOpcoes, faturamentoMensal: entradas.valor }, cltOpcoes),
     }
   }, [entradas, temValor])
 

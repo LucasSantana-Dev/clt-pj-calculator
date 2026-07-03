@@ -1,5 +1,6 @@
 import type { EquivalenciaCltParaPj, EquivalenciaPjParaClt } from '../engine/solve'
 import { brl, brlExato, pct } from './formato'
+import { CountUp } from './CountUp'
 
 const ROTULO_ESTRATEGIA = {
   'pro-labore-minimo': 'pró-labore mínimo (um salário mínimo)',
@@ -13,7 +14,7 @@ export function ResultadoCltParaPj({ eq }: { eq: EquivalenciaCltParaPj }) {
     <section className="resultado">
       <div className="cri-card-flat destaque">
         <p className="destaque-legenda">Para empatar com esse pacote CLT, seu PJ precisa faturar</p>
-        <p className="destaque-valor display">{brl(faturamentoEquivalente)}<span className="destaque-mes">/mês</span></p>
+        <p className="destaque-valor display"><CountUp valor={faturamentoEquivalente} formato={brl} /><span className="destaque-mes">/mês</span></p>
         <p className="nota">
           Empate no líquido anual: {brlExato(clt.liquidoAnualTotal)} no ano, contando 13º, férias com um
           terço, FGTS e os benefícios que você informou. Isso ainda não inclui o colchão de segurança,
@@ -65,7 +66,7 @@ export function ResultadoPjParaClt({ eq }: { eq: EquivalenciaPjParaClt }) {
     <section className="resultado">
       <div className="cri-card-flat destaque">
         <p className="destaque-legenda">Esse faturamento PJ equivale a um salário CLT de</p>
-        <p className="destaque-valor display">{brl(salarioEquivalente)}<span className="destaque-mes">/mês (bruto)</span></p>
+        <p className="destaque-valor display"><CountUp valor={salarioEquivalente} formato={brl} /><span className="destaque-mes">/mês (bruto)</span></p>
         <p className="nota">
           Empate no líquido anual: {brlExato(pj.liquidoAnualTotal)} no ano. No CLT esse valor já viria com
           13º, férias com um terço, FGTS e a estabilidade do vínculo. No PJ, quem cobre isso é você. Uma

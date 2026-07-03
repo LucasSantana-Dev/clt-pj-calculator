@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { PontoSerie, Tendencias as TendenciasData } from '../engine/tendencias'
 import { brl, pct } from './formato'
 
@@ -77,7 +77,16 @@ function GraficoLinha({ series, formato, altura = 190 }: GraficoLinhaProps) {
           const ultimo = s.pontos[s.pontos.length - 1]
           return (
             <g key={s.nome}>
-              <path d={d} fill="none" stroke={s.cor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <path
+                d={d}
+                pathLength={1}
+                className="linha-serie"
+                fill="none"
+                stroke={s.cor}
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
               {s.pontos.map((p, i) => (
                 <circle
                   key={p.ano}
@@ -124,8 +133,26 @@ export function Tendencias({ dados }: { dados: TendenciasData }) {
   const premioAtual = dados.seriePremioPj[dados.seriePremioPj.length - 1]
   const premioPico = dados.seriePremioPj.reduce((a, b) => (b.valor > a.valor ? b : a))
 
+  const secaoRef = useRef<HTMLElement>(null)
+  const [visivel, setVisivel] = useState(false)
+  useEffect(() => {
+    const el = secaoRef.current
+    if (!el) return
+    const observador = new IntersectionObserver(
+      ([entrada]) => {
+        if (entrada.isIntersecting) {
+          setVisivel(true)
+          observador.disconnect()
+        }
+      },
+      { threshold: 0.2 },
+    )
+    observador.observe(el)
+    return () => observador.disconnect()
+  }, [])
+
   return (
-    <section className="cri-card-flat tendencias">
+    <section ref={secaoRef} className={`cri-card-flat tendencias${visivel ? ' visivel' : ''}`}>
       <h3 className="display">Para onde o mercado está indo</h3>
       <p className="nota">Séries das seis edições da pesquisa (2021 a 2026), em valores nominais.</p>
 

@@ -43,6 +43,16 @@ describe('Pacote anual CLT', () => {
     expect(r.breakdown.fgtsAnual).toBeCloseTo(5333.33, 1)
     expect(r.liquidoAnualTotal).toBeCloseTo(64615.5, 0)
   })
+  it('vale-transporte desconta 6% do salário do benefício', () => {
+    const sem = calculaClt({ salarioBruto: 5000 })
+    // VT de 500 com desconto de 6% × 5000 = 300 → líquido 200/mês = 2400/ano
+    const com = calculaClt({ salarioBruto: 5000, valeTransporteMensal: 500 })
+    expect(com.liquidoAnualTotal).toBeCloseTo(sem.liquidoAnualTotal + 2400, 1)
+    // VT abaixo do desconto → benefício líquido zero
+    const pequeno = calculaClt({ salarioBruto: 5000, valeTransporteMensal: 250 })
+    expect(pequeno.liquidoAnualTotal).toBeCloseTo(sem.liquidoAnualTotal, 1)
+  })
+
   it('inclui benefícios e PLR', () => {
     const sem = calculaClt({ salarioBruto: 5000 })
     const com = calculaClt({ salarioBruto: 5000, beneficiosMensais: 1000, plrLiquidaAnual: 5000 })

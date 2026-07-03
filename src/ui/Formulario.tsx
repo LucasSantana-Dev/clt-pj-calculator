@@ -10,7 +10,12 @@ export interface Entradas {
   direcao: Direcao
   valor: number
   dependentes: number
-  beneficiosMensais: number
+  vrVaMensal: number
+  planoSaudeMensal: number
+  auxHomeOfficeMensal: number
+  valeTransporteMensal: number
+  auxEducacaoMensal: number
+  outrosBeneficiosMensais: number
   plrLiquidaAnual: number
   contadorMensal: number
   proLaboreCustom: number | null
@@ -110,25 +115,76 @@ export function Formulario({ entradas, aoMudar }: Props) {
       <details className="bloco-opcional">
         <summary>Benefícios do CLT (opcional)</summary>
         <p className="nota">
-          Vale-refeição, plano de saúde pago pela empresa e PLR mudam bastante a conta. Se a proposta CLT
-          tem benefícios, vale informar.
+          Benefícios mudam bastante a conta. Se a proposta CLT tem algum destes, vale informar. Os campos
+          acompanham a modalidade que você escolheu.
         </p>
         <div className="grade-2">
           <CampoNumero
-            id="beneficios"
-          prefixo="R$"
-            rotulo="Benefícios mensais (VR, VA, plano, etc.)"
-            valor={entradas.beneficiosMensais}
-            aoMudar={(v) => muda('beneficiosMensais', v)}
+            id="vr-va"
+            prefixo="R$"
+            rotulo="VR / VA por mês"
+            valor={entradas.vrVaMensal}
+            aoMudar={(v) => muda('vrVaMensal', v)}
+            passo={50}
+          />
+          <CampoNumero
+            id="plano-saude"
+            prefixo="R$"
+            rotulo="Plano de saúde pago pela empresa (mês)"
+            valor={entradas.planoSaudeMensal}
+            aoMudar={(v) => muda('planoSaudeMensal', v)}
+            passo={50}
+          />
+          {entradas.modalidade !== 'presencial' && (
+            <CampoNumero
+              id="aux-home-office"
+              prefixo="R$"
+              rotulo="Auxílio home office por mês"
+              valor={entradas.auxHomeOfficeMensal}
+              aoMudar={(v) => muda('auxHomeOfficeMensal', v)}
+              passo={50}
+            />
+          )}
+          {entradas.modalidade !== 'remoto' && (
+            <CampoNumero
+              id="vale-transporte"
+              prefixo="R$"
+              rotulo="Vale-transporte por mês"
+              valor={entradas.valeTransporteMensal}
+              aoMudar={(v) => muda('valeTransporteMensal', v)}
+              passo={50}
+            />
+          )}
+          <CampoNumero
+            id="aux-educacao"
+            prefixo="R$"
+            rotulo="Auxílio educação / cursos por mês"
+            valor={entradas.auxEducacaoMensal}
+            aoMudar={(v) => muda('auxEducacaoMensal', v)}
+            passo={50}
+          />
+          <CampoNumero
+            id="outros-beneficios"
+            prefixo="R$"
+            rotulo="Outros benefícios por mês"
+            valor={entradas.outrosBeneficiosMensais}
+            aoMudar={(v) => muda('outrosBeneficiosMensais', v)}
+            passo={50}
           />
           <CampoNumero
             id="plr"
-          prefixo="R$"
+            prefixo="R$"
             rotulo="PLR líquida estimada por ano"
             valor={entradas.plrLiquidaAnual}
             aoMudar={(v) => muda('plrLiquidaAnual', v)}
           />
         </div>
+        {entradas.modalidade !== 'remoto' && (
+          <p className="nota">
+            No vale-transporte a lei permite descontar até 6% do salário; a calculadora já considera só o
+            que sobra disso como benefício real.
+          </p>
+        )}
       </details>
 
       <details className="bloco-opcional">

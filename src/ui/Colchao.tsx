@@ -1,5 +1,6 @@
 import type { ColchaoInput, ColchaoResult } from '../engine/colchao'
 import { brl, brlExato, pct } from './formato'
+import { CampoNumero } from './CampoNumero'
 
 interface Props {
   resultado: ColchaoResult
@@ -25,46 +26,42 @@ export function Colchao({ resultado, config, aoMudar }: Props) {
       </p>
 
       <div className="colchao-config grade-2">
-        <label className="campo">
-          <span className="campo-rotulo">Semanas de férias por ano</span>
-          <input
-            type="number"
-            min={0}
-            max={12}
-            value={config.semanasFerias}
-            onChange={(e) => aoMudar({ ...config, semanasFerias: Number(e.target.value) || 0 })}
-          />
-        </label>
-        <label className="campo">
-          <span className="campo-rotulo">Semanas paradas entre contratos</span>
-          <input
-            type="number"
-            min={0}
-            max={26}
-            value={config.semanasInatividade}
-            onChange={(e) => aoMudar({ ...config, semanasInatividade: Number(e.target.value) || 0 })}
-          />
-        </label>
-        <label className="campo">
-          <span className="campo-rotulo">Plano de saúde por mês (R$)</span>
-          <input
-            type="number"
-            min={0}
-            step={50}
-            value={config.planoSaudeMensal}
-            onChange={(e) => aoMudar({ ...config, planoSaudeMensal: Number(e.target.value) || 0 })}
-          />
-        </label>
-        <label className="campo">
-          <span className="campo-rotulo">Previdência por mês (R$)</span>
-          <input
-            type="number"
-            min={0}
-            step={50}
-            value={config.previdenciaMensal}
-            onChange={(e) => aoMudar({ ...config, previdenciaMensal: Number(e.target.value) || 0 })}
-          />
-        </label>
+        <CampoNumero
+          id="colchao-ferias"
+          rotulo="Semanas de férias por ano"
+          valor={config.semanasFerias}
+          aoMudar={(v) => aoMudar({ ...config, semanasFerias: v })}
+          passo={1}
+          max={12}
+          mostrarZero
+        />
+        <CampoNumero
+          id="colchao-inatividade"
+          rotulo="Semanas paradas entre contratos"
+          valor={config.semanasInatividade}
+          aoMudar={(v) => aoMudar({ ...config, semanasInatividade: v })}
+          passo={1}
+          max={26}
+          mostrarZero
+        />
+        <CampoNumero
+          id="colchao-plano"
+          rotulo="Plano de saúde por mês"
+          valor={config.planoSaudeMensal}
+          aoMudar={(v) => aoMudar({ ...config, planoSaudeMensal: v })}
+          prefixo="R$"
+          passo={50}
+          mostrarZero
+        />
+        <CampoNumero
+          id="colchao-previdencia"
+          rotulo="Previdência por mês"
+          valor={config.previdenciaMensal}
+          aoMudar={(v) => aoMudar({ ...config, previdenciaMensal: v })}
+          prefixo="R$"
+          passo={50}
+          mostrarZero
+        />
       </div>
 
       <ul className="colchao-itens">

@@ -423,16 +423,93 @@ section {
   border-color: var(--accent);
 }
 
-.campo-input {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
 .campo-prefixo {
   color: var(--muted);
   font-family: var(--display);
   font-size: 14px;
+}
+
+/* ── Campo numérico com stepper ─────────────────────── */
+.campo-num {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--surface-2);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  transition: border-color 0.15s ease;
+}
+
+.campo-num:focus-within {
+  border-color: var(--accent);
+}
+
+.campo-num:hover:not(:focus-within) {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+}
+
+.campo-num .campo-prefixo {
+  padding-left: 12px;
+}
+
+.campo-num input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 16px;
+  font-weight: 600;
+  padding: 10px 12px;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.campo-num input:focus {
+  outline: none;
+}
+
+.campo-num input::-webkit-inner-spin-button,
+.campo-num input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.stepper {
+  display: flex;
+  gap: 4px;
+  padding-right: 8px;
+  flex-shrink: 0;
+}
+
+.stepper button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+  transition: border-color 0.12s ease, color 0.12s ease, background 0.12s ease;
+}
+
+.stepper button:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.stepper button:active:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 15%, var(--surface));
+}
+
+.stepper button:disabled {
+  opacity: 0.35;
+  cursor: default;
 }
 
 .grade-perfil,
@@ -1000,4 +1077,39 @@ section {
   max-width: 760px;
   margin: 12px auto 0;
   font-size: 13.5px;
+}
+
+/* ── Marcadores customizados de details/summary ─────── */
+.bloco-opcional summary,
+.como-calculamos summary,
+.tabela-dados summary {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.bloco-opcional summary::-webkit-details-marker,
+.como-calculamos summary::-webkit-details-marker,
+.tabela-dados summary::-webkit-details-marker {
+  display: none;
+}
+
+.bloco-opcional summary::before,
+.como-calculamos summary::before,
+.tabela-dados summary::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 0.15s ease;
+  flex-shrink: 0;
+}
+
+.bloco-opcional[open] > summary::before,
+.como-calculamos[open] > summary::before,
+.tabela-dados[open] > summary::before {
+  transform: rotate(45deg);
 }

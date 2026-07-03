@@ -2,6 +2,7 @@ import type { Dispatch, SetStateAction } from 'react'
 import type { Area, Experiencia, Modalidade, Senioridade, Uf } from '../engine/benchmark'
 import { AREAS, EXPERIENCIAS, MODALIDADES, SENIORIDADES, UFS } from './opcoes'
 import { Select } from './Select'
+import { CampoNumero } from './CampoNumero'
 
 export type Direcao = 'clt-para-pj' | 'pj-para-clt'
 
@@ -25,38 +26,6 @@ interface Props {
   aoMudar: Dispatch<SetStateAction<Entradas>>
 }
 
-function CampoNumero({
-  id,
-  rotulo,
-  valor,
-  aoMudar,
-  prefixo = 'R$',
-  passo = 100,
-}: {
-  id: string
-  rotulo: string
-  valor: number
-  aoMudar: (v: number) => void
-  prefixo?: string
-  passo?: number
-}) {
-  return (
-    <label className="campo" htmlFor={id}>
-      <span className="campo-rotulo">{rotulo}</span>
-      <span className="campo-input">
-        <span className="campo-prefixo">{prefixo}</span>
-        <input
-          id={id}
-          type="number"
-          min={0}
-          step={passo}
-          value={valor || ''}
-          onChange={(e) => aoMudar(Number(e.target.value) || 0)}
-        />
-      </span>
-    </label>
-  )
-}
 
 export function Formulario({ entradas, aoMudar }: Props) {
   const ehCltParaPj = entradas.direcao === 'clt-para-pj'
@@ -86,6 +55,7 @@ export function Formulario({ entradas, aoMudar }: Props) {
 
       <CampoNumero
         id="valor"
+        prefixo="R$"
         rotulo={ehCltParaPj ? 'Salário bruto mensal (CLT)' : 'Faturamento mensal (PJ)'}
         valor={entradas.valor}
         aoMudar={(v) => muda('valor', v)}
@@ -146,12 +116,14 @@ export function Formulario({ entradas, aoMudar }: Props) {
         <div className="grade-2">
           <CampoNumero
             id="beneficios"
+          prefixo="R$"
             rotulo="Benefícios mensais (VR, VA, plano, etc.)"
             valor={entradas.beneficiosMensais}
             aoMudar={(v) => muda('beneficiosMensais', v)}
           />
           <CampoNumero
             id="plr"
+          prefixo="R$"
             rotulo="PLR líquida estimada por ano"
             valor={entradas.plrLiquidaAnual}
             aoMudar={(v) => muda('plrLiquidaAnual', v)}
@@ -168,12 +140,14 @@ export function Formulario({ entradas, aoMudar }: Props) {
         <div className="grade-2">
           <CampoNumero
             id="contador"
+          prefixo="R$"
             rotulo="Contador por mês"
             valor={entradas.contadorMensal}
             aoMudar={(v) => muda('contadorMensal', v)}
           />
           <CampoNumero
             id="prolabore"
+          prefixo="R$"
             rotulo="Pró-labore fixo (0 = otimizar)"
             valor={entradas.proLaboreCustom ?? 0}
             aoMudar={(v) => muda('proLaboreCustom', v > 0 ? v : null)}

@@ -77,7 +77,7 @@ export const WORK_MODE_OPTIONS: { value: WorkMode; label: string }[] = [
 ]
 
 export const SITE = 'https://criativaria.com'
-export const DISCORD = 'https://discord.gg/9mV9HnEkfT'
+export const DISCORD = 'https://discord.gg/criativaria'
 
 export interface RelatedGuide {
   slug: string

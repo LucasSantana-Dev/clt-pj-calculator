@@ -152,7 +152,7 @@ export default function App() {
       <footer className="site-footer">
         <div className="footer-inner">
           <div className="footer-social">
-            <a href="https://discord.gg/9mV9HnEkfT" target="_blank" rel="noopener noreferrer">
+            <a href="https://discord.gg/criativaria" target="_blank" rel="noopener noreferrer">
               Entrar na comunidade (Discord)
             </a>
             <a href="https://www.twitch.tv/criativaria" target="_blank" rel="noopener noreferrer">

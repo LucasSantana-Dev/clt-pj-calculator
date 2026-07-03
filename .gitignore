@@ -5,3 +5,5 @@ dist
 .DS_Store
 .playwright-mcp
 *.png
+test-results
+playwright-report

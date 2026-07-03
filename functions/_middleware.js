@@ -1,18 +1,18 @@
 /**
- * Gate de staging via Discord: só entra quem está no Discord da Criativaria.
- * Ativo quando DISCORD_CLIENT_ID + SESSION_SECRET existem no projeto Pages;
- * sem essas vars o site fica aberto (estado de produção futura).
+ * Gate de staging via Discord, autenticado pelo hub central (criativaria-auth):
+ * o site nunca fala com o Discord; manda para AUTH_HUB_URL/login e recebe de
+ * volta um token SSO curto que /api/auth/sso troca por sessão local.
+ * Interruptor-mestre: secret STAGING. Sem ela, site aberto (produção futura).
  */
 import { verifySession, getSessionToken } from './_lib/session.js'
 
 export async function onRequest(context) {
   const { request, env, next } = context
 
-  // STAGING é o interruptor-mestre: sem ele, site aberto (produção futura).
   if (!env.STAGING) return next()
 
-  // Staging ligado mas OAuth ainda não configurado: nunca deixar aberto.
-  if (!env.DISCORD_CLIENT_ID || !env.SESSION_SECRET) {
+  // Staging ligado mas hub ainda não configurado: nunca deixar aberto.
+  if (!env.AUTH_HUB_URL || !env.SSO_SECRET || !env.SESSION_SECRET) {
     return new Response('Staging da Criativaria em configuração. Volte em instantes.', {
       status: 503,
       headers: { 'Content-Type': 'text/plain; charset=utf-8', 'X-Robots-Tag': 'noindex, nofollow' },
@@ -21,7 +21,7 @@ export async function onRequest(context) {
 
   const url = new URL(request.url)
 
-  // rotas do fluxo OAuth sempre passam
+  // rotas do fluxo de sessão sempre passam
   if (url.pathname.startsWith('/api/auth/')) return next()
 
   const session = await verifySession(getSessionToken(request), env.SESSION_SECRET)
@@ -32,8 +32,9 @@ export async function onRequest(context) {
     return response
   }
 
+  const loginUrl = `${env.AUTH_HUB_URL}/login?to=${encodeURIComponent(url.origin + url.pathname)}`
   const authError = url.searchParams.get('auth_error')
-  return new Response(loginPage(authError), {
+  return new Response(loginPage(authError, loginUrl), {
     status: 200,
     headers: {
       'Content-Type': 'text/html; charset=utf-8',
@@ -47,12 +48,13 @@ const ERROR_MESSAGES = {
   not_member:
     'Sua conta do Discord ainda não está na comunidade da Criativaria. Entre no servidor primeiro e tente de novo.',
   csrf: 'A sessão de login expirou. Tente entrar de novo.',
+  sso_invalid: 'O login expirou no caminho de volta. Tente de novo.',
   no_code: 'O Discord não devolveu a autorização. Tente de novo.',
   token_failed: 'Não foi possível confirmar seu login com o Discord. Tente de novo.',
   server_error: 'Algo falhou do nosso lado. Tente de novo em instantes.',
 }
 
-function loginPage(authError) {
+function loginPage(authError, loginUrl) {
   const errorHtml = ERROR_MESSAGES[authError]
     ? `<p class="err">${ERROR_MESSAGES[authError]}</p>`
     : ''
@@ -93,7 +95,7 @@ function loginPage(authError) {
     </div>
     <p class="sub">Ambiente de homologação da Criativaria. Entre com a conta do Discord que está na comunidade.</p>
     ${errorHtml}
-    <a class="btn" href="/api/auth/discord">
+    <a class="btn" href="${loginUrl}">
       <svg viewBox="0 0 127.14 96.36" width="22" height="17" fill="currentColor" aria-hidden="true"><path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/></svg>
       Entrar com Discord
     </a>

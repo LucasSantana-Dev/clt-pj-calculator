@@ -38,10 +38,11 @@ jobs:
           DISCORD_CLIENT_ID: ${{ secrets.DISCORD_CLIENT_ID }}
           DISCORD_CLIENT_SECRET: ${{ secrets.DISCORD_CLIENT_SECRET }}
           DISCORD_GUILD_ID: ${{ secrets.DISCORD_GUILD_ID }}
+          SSO_SECRET: ${{ secrets.SSO_SECRET }}
         run: |
           # Valores reutilizáveis (org-level quando o repo migrar para a org):
           # só sincroniza os que existirem como secret no GitHub.
-          for key in DISCORD_CLIENT_ID DISCORD_CLIENT_SECRET DISCORD_GUILD_ID; do
+          for key in DISCORD_CLIENT_ID DISCORD_CLIENT_SECRET DISCORD_GUILD_ID SSO_SECRET; do
             value="${!key}"
             if [ -n "$value" ]; then
               printf '%s' "$value" | npx wrangler pages secret put "$key" --project-name criativaria-clt-pj

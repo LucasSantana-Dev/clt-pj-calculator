@@ -1,51 +1,29 @@
-// Signed session token — HMAC-SHA256 via Web Crypto (Cloudflare Workers)
-// Format: base64url(payload).base64url(signature)
+// Session token — jose (JWT, HMAC-SHA256) for the local 7-day site session.
+//
+// SSO handshake tokens from the auth hub (criativaria-auth) use a separate
+// legacy HMAC format: base64url(payload).base64url(signature), no JWT header.
+// The hub has not migrated to jose — verifyHubToken keeps that wire format.
+// Do not change it without migrating the hub in lockstep (see ADR-0004).
+import { SignJWT, jwtVerify } from 'jose'
 
-const SESSION_DURATION_MS = 7 * 24 * 60 * 60 * 1000 // 7 days
-const PARTIAL_DURATION_MS = 10 * 60 * 1000           // 10 min — covers Discord→Twitch redirect time
+const SESSION_DURATION = '7d'
 
-function b64url(buf) {
-  return btoa(String.fromCharCode(...new Uint8Array(buf)))
-    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
-}
-
-function b64urlString(str) {
-  return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
-}
-
-function b64urlDecode(str) {
-  return atob(str.replace(/-/g, '+').replace(/_/g, '/'))
-}
-
-async function getKey(secret) {
-  return crypto.subtle.importKey(
-    'raw',
-    new TextEncoder().encode(secret),
-    { name: 'HMAC', hash: 'SHA-256' },
-    false,
-    ['sign', 'verify']
-  )
+function sessionKey(secret) {
+  return new TextEncoder().encode(secret)
 }
 
 export async function signSession(payload, secret) {
-  return sign(payload, secret, SESSION_DURATION_MS)
+  return new SignJWT(payload)
+    .setProtectedHeader({ alg: 'HS256' })
+    .setIssuedAt()
+    .setExpirationTime(SESSION_DURATION)
+    .sign(sessionKey(secret))
 }
 
 export async function verifySession(token, secret) {
   try {
     if (!token) return null
-    const dot = token.lastIndexOf('.')
-    if (dot < 0) return null
-    const data = token.slice(0, dot)
-    const sig  = token.slice(dot + 1)
-  
-    const key = await getKey(secret)
-    const sigBytes = Uint8Array.from(b64urlDecode(sig), c => c.charCodeAt(0))
-    const valid = await crypto.subtle.verify('HMAC', key, sigBytes, new TextEncoder().encode(data))
-    if (!valid) return null
-  
-    const payload = JSON.parse(b64urlDecode(data))
-    if (payload.exp < Date.now()) return null
+    const { payload } = await jwtVerify(token, sessionKey(secret), { algorithms: ['HS256'] })
     return payload
   } catch {
     return null
@@ -66,68 +44,39 @@ export function getSessionToken(request) {
   return match ? match[1] : null
 }
 
-// Partial session — used between Discord and Twitch steps of the AND-gate flow
-async function sign(payload, secret, durationMs) {
-  const data = b64urlString(JSON.stringify({ ...payload, exp: Date.now() + durationMs }))
-  const key  = await getKey(secret)
-  const sig  = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(data))
-  return `${data}.${b64url(sig)}`
+// ── Legacy HMAC format, shared with the hub's crypto.js ──────────────────────
+function b64urlDecode(str) {
+  return atob(str.replace(/-/g, '+').replace(/_/g, '/'))
 }
 
-export async function signPartial(payload, secret) {
-  return sign(payload, secret, PARTIAL_DURATION_MS)
+async function getLegacyKey(secret) {
+  return crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign', 'verify']
+  )
 }
 
-export async function verifyPartial(token, secret) {
+// Verifies tokens signed by the hub's hand-rolled sign() — the SSO handshake token.
+export async function verifyHubToken(token, secret) {
   try {
     if (!token) return null
     const dot = token.lastIndexOf('.')
     if (dot < 0) return null
     const data = token.slice(0, dot)
     const sig  = token.slice(dot + 1)
-    const key  = await getKey(secret)
+
+    const key = await getLegacyKey(secret)
     const sigBytes = Uint8Array.from(b64urlDecode(sig), c => c.charCodeAt(0))
     const valid = await crypto.subtle.verify('HMAC', key, sigBytes, new TextEncoder().encode(data))
     if (!valid) return null
+
     const payload = JSON.parse(b64urlDecode(data))
     if (payload.exp < Date.now()) return null
     return payload
   } catch {
     return null
   }
-}
-
-export function partialCookie(token) {
-  return `cri_partial=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=600`
-}
-
-export function clearPartialCookie() {
-  return 'cri_partial=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0'
-}
-
-export function getPartialToken(request) {
-  const cookie = request.headers.get('Cookie') || ''
-  const match  = cookie.match(/cri_partial=([^;]+)/)
-  return match ? match[1] : null
-}
-
-// ── OAuth state (CSRF protection) ─────────────────────────────────────────────
-export function generateState() {
-  const array = new Uint8Array(32)
-  crypto.getRandomValues(array)
-  return Array.from(array, b => b.toString(16).padStart(2, '0')).join('')
-}
-
-export function stateCookie(state) {
-  return `cri_oauth_state=${state}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=600`
-}
-
-export function clearStateCookie() {
-  return 'cri_oauth_state=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0'
-}
-
-export function getStateToken(request) {
-  const cookie = request.headers.get('Cookie') || ''
-  const match  = cookie.match(/cri_oauth_state=([^;]+)/)
-  return match ? match[1] : null
 }

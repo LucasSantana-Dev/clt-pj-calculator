@@ -10,4 +10,5 @@ Calculadora CLT x PJ da Criativaria. Vite + React 19 + TS, engine puro em `src/e
 - **Benchmark**: números sempre com fonte + data (ADR-0001); rotular estimativas como "faixa estimada".
 - **Deploy**: automático via GitHub Actions no push para main (CI: typecheck + testes + build + smoke e2e + Cloudflare Pages). Manual `npx wrangler pages deploy dist --project-name criativaria-clt-pj` só como contingência. Nunca Vercel.
 - **Repo**: github.com/LucasSantana-Dev/clt-pj-calculator (transferir para a org Criativaria quando houver permissão de criação).
+- **Staging**: o deploy é ambiente de staging protegido por Basic Auth (`functions/_middleware.js`, usuário `criativaria`, senha na secret `STAGING_PASSWORD` do projeto Pages) com `X-Robots-Tag: noindex`. Para lançar público: remover a secret (`npx wrangler pages secret delete STAGING_PASSWORD --project-name criativaria-clt-pj`) — o middleware libera sozinho quando ela não existe.
 - **Voz**: copy segue CRIATIVARIA.md (sem travessão, sem hype, positivo primeiro).

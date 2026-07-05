@@ -2,6 +2,7 @@ node_modules
 dist
 *.local
 .dev.vars
+.npmrc
 .DS_Store
 .playwright-mcp
 *.png

@@ -15,12 +15,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # registry-url + scope make setup-node write an auth-configured .npmrc at
+      # runtime from NODE_AUTH_TOKEN — the repo's own .npmrc is gitignored (it
+      # holds a real token locally), so CI must generate one this way. Without
+      # it, npm ci 401s ("authentication token not provided").
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
+          registry-url: https://npm.pkg.github.com
+          scope: '@criativaria-projects'
 
+      # PACKAGES_READ_TOKEN: classic PAT with read:packages, needed for
+      # @criativaria-projects/auth-crypto (private GitHub Packages registry —
+      # GITHUB_TOKEN can't read a private package from a different repo
+      # without that repo's "Manage Actions access" allowlist, which isn't
+      # API-configurable). See career-tools/docs/adr/0002-shared-auth-crypto-package-defer-jwt-migration.md
       - run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.PACKAGES_READ_TOKEN }}
 
       - run: npm run typecheck
 

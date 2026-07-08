@@ -3,10 +3,13 @@
  * o site nunca fala com o Discord; manda para AUTH_HUB_URL/login e recebe de
  * volta um token SSO curto que /api/auth/sso troca por sessão local.
  * Interruptor-mestre: secret STAGING. Sem ela, site aberto (produção futura).
+ *
+ * Observabilidade: Sentry error monitoring via sentryPagesPlugin.
  */
+import * as Sentry from '@sentry/cloudflare'
 import { verifySession, getSessionToken } from './_lib/session.js'
 
-export async function onRequest(context) {
+async function authMiddleware(context) {
   const { request, env, next } = context
 
   if (!env.STAGING) return next()
@@ -43,6 +46,15 @@ export async function onRequest(context) {
     },
   })
 }
+
+export const onRequest = [
+  Sentry.sentryPagesPlugin((context) => ({
+    dsn: context.env.SENTRY_DSN ?? 'https://89bc3bc15ea6a2344b1691c0b6ceff09@o4511700575387648.ingest.us.sentry.io/4511701049409536',
+    environment: context.env.ENVIRONMENT ?? 'production',
+    tracesSampleRate: 0.1,
+  })),
+  authMiddleware,
+]
 
 const ERROR_MESSAGES = {
   not_member:

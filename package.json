@@ -12,7 +12,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@criativaria-projects/auth-crypto": "^0.2.0",
+    "@criativaria-projects/auth-crypto": "^0.2.1",
     "@sentry/cloudflare": "^10.64.0",
     "@sentry/react": "^10.64.0",
     "gsap": "^3.15.0",

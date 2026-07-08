@@ -31,7 +31,9 @@ jobs:
       # GITHUB_TOKEN can't read a private package from a different repo
       # without that repo's "Manage Actions access" allowlist, which isn't
       # API-configurable). See career-tools/docs/adr/0002-shared-auth-crypto-package-defer-jwt-migration.md
-      - run: npm ci
+      # TODO: restore npm ci after regenerating package-lock on an authed box
+      # (auth-crypto 0.2.1 bump, 2026-07-08)
+      - run: npm install
         env:
           NODE_AUTH_TOKEN: ${{ secrets.PACKAGES_READ_TOKEN }}
 

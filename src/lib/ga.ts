@@ -30,12 +30,18 @@ export function initGa(): void {
   script.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`
   document.head.appendChild(script)
 
-  window.dataLayer = window.dataLayer || []
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function gtag(..._args: unknown[]) {
-    // Window.dataLayer.push gets assigned by Google Tag Manager script
+  const w = window as unknown as {
+    dataLayer?: unknown[]
+    gtag?: (...args: unknown[]) => void
   }
-  window.gtag = gtag
+  w.dataLayer = w.dataLayer || []
+  function gtag(..._args: unknown[]) {
+    // Official snippet semantics: gtag.js expects the Arguments object itself
+    // (a plain array is ignored by its queue consumer).
+    // eslint-disable-next-line prefer-rest-params
+    w.dataLayer!.push(arguments)
+  }
+  w.gtag = gtag
   gtag('js', new Date())
   gtag('config', gaId)
 }
@@ -43,17 +49,15 @@ export function initGa(): void {
 /**
  * Filter and constrain parameter values for privacy.
  * - Drops params not in whitelist.
+ * - Drops non-string values entirely (numbers like salaries are unsendable).
  * - Truncates strings to MAX_PARAM_LENGTH.
  */
 function filterParams(params: GtagParams): GtagParams {
-  const filtered: Record<string, string | number | boolean | undefined> = {}
+  const filtered: Record<string, string> = {}
   for (const [key, value] of Object.entries(params)) {
     if (!PARAM_WHITELIST.has(key)) continue
-    if (typeof value === 'string') {
-      filtered[key] = value.slice(0, MAX_PARAM_LENGTH)
-    } else {
-      filtered[key] = value
-    }
+    if (typeof value !== 'string') continue
+    filtered[key] = value.slice(0, MAX_PARAM_LENGTH)
   }
   return filtered
 }

@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { cltToPj, pjToClt } from './engine/solve'
 import { computeCushion, DEFAULT_CUSHION, type CushionInput } from './engine/cushion'
 import { computeBenchmark } from './engine/benchmark'
 import { computeTrends } from './engine/trends'
+import { trackEvent } from './lib/ga'
 import { CalcForm, type CalcInputs } from './ui/CalcForm'
 import { CltToPjResults, PjToCltResults } from './ui/Results'
 import { Cushion } from './ui/Cushion'
@@ -34,6 +35,18 @@ const INITIAL_INPUTS: CalcInputs = {
 export default function App() {
   const [inputs, setInputs] = useState<CalcInputs>(INITIAL_INPUTS)
   const [cushionConfig, setCushionConfig] = useState<Required<CushionInput>>(DEFAULT_CUSHION)
+
+  // Track tool opened once on mount
+  useEffect(() => {
+    trackEvent('tool_opened', { tool: 'calculadora' })
+  }, [])
+
+  // Track analysis completed when result is computed
+  useEffect(() => {
+    if (inputs.value >= 1000) {
+      trackEvent('analysis_completed', { tool: 'calculadora' })
+    }
+  }, [inputs.value])
 
   const hasValue = inputs.value >= 1000
 

@@ -40,6 +40,8 @@ jobs:
       - run: npm run test
 
       - run: npm run build
+        env:
+          VITE_GA_ID: ${{ secrets.VITE_GA_ID }}
 
       - name: Install Playwright (chromium)
         run: npx playwright install chromium --with-deps

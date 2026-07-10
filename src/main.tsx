@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import * as Sentry from '@sentry/react'
+import { initGa } from './lib/ga'
 import App from './App'
 import './index.css'
 
@@ -9,6 +10,8 @@ Sentry.init({
   environment: import.meta.env.MODE === 'production' ? 'production' : 'development',
   tracesSampleRate: 0.1,
 })
+
+initGa()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

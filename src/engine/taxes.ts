@@ -71,3 +71,14 @@ export function monthlyIrrf({ income, inss, dependents = 0, applyLei15270 = fals
 export function round2(v: number): number {
   return Math.round(v * 100) / 100
 }
+
+/**
+ * Coage uma entrada numérica a um número finito ≥ 0. Defesa na fronteira do
+ * motor contra NaN, Infinity e negativos vindos da UI (input vazio/colado) ou
+ * de qualquer caller futuro (ex.: API). Para entradas válidas é identidade, então
+ * não altera nenhum cálculo fiscal existente.
+ */
+export function safeAmount(v: unknown, fallback = 0): number {
+  const n = typeof v === 'number' ? v : Number(v)
+  return Number.isFinite(n) && n >= 0 ? n : fallback
+}

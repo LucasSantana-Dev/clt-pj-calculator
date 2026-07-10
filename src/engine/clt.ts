@@ -13,7 +13,7 @@
  *   conta como parte do pacote (patrimônio do trabalhador).
  */
 import { FGTS_RATE } from './tables2026'
-import { cltInss, monthlyIrrf, round2 } from './taxes'
+import { cltInss, monthlyIrrf, round2, safeAmount } from './taxes'
 
 export interface CltInput {
   grossSalary: number
@@ -58,13 +58,13 @@ function liquidoPagamento(income: number, dependents: number): {
 }
 
 export function computeClt(input: CltInput): CltResult {
-  const {
-    grossSalary,
-    dependents = 0,
-    monthlyBenefits = 0,
-    valeTransporteMonthly = 0,
-    annualNetPlr = 0,
-  } = input
+  // Sanitiza na fronteira: qualquer entrada não-finita/negativa vira 0 antes de
+  // alimentar o cálculo fiscal (evita NaN/valores absurdos propagando).
+  const grossSalary = safeAmount(input.grossSalary)
+  const dependents = Math.floor(safeAmount(input.dependents))
+  const monthlyBenefits = safeAmount(input.monthlyBenefits)
+  const valeTransporteMonthly = safeAmount(input.valeTransporteMonthly)
+  const annualNetPlr = safeAmount(input.annualNetPlr)
   const monthlyVtNet = Math.max(0, valeTransporteMonthly - grossSalary * 0.06)
 
   const mesNormal = liquidoPagamento(grossSalary, dependents)

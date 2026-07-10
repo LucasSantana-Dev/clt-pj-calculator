@@ -28,7 +28,7 @@ import {
   DEFAULT_MONTHLY_ACCOUNTANT,
   type SimplesBracket,
 } from './tables2026'
-import { monthlyIrrf, round2 } from './taxes'
+import { monthlyIrrf, round2, safeAmount } from './taxes'
 
 export type Annex = 'III' | 'V'
 
@@ -58,6 +58,7 @@ export interface PjResult {
 }
 
 export function effectiveRate(rbt12: number, tabela: SimplesBracket[]): number {
+  if (rbt12 <= 0) return 0 // sem faturamento não há DAS; evita divisão por zero
   const bracket = tabela.find((f) => rbt12 <= f.rbt12UpTo) ?? tabela[tabela.length - 1]
   return (rbt12 * bracket.nominalRate - bracket.deductionAmount) / rbt12
 }
@@ -106,12 +107,33 @@ function evaluateScenario(
 }
 
 export function computePj(input: PjInput): PjResult {
-  const {
-    monthlyRevenue,
-    customProLabore,
-    monthlyAccountant = DEFAULT_MONTHLY_ACCOUNTANT,
-    dependents = 0,
-  } = input
+  // Sanitiza na fronteira (NaN/Infinity/negativo → 0), protege todo caller.
+  const monthlyRevenue = safeAmount(input.monthlyRevenue)
+  const customProLabore = input.customProLabore === undefined ? undefined : safeAmount(input.customProLabore)
+  const monthlyAccountant =
+    input.monthlyAccountant === undefined ? DEFAULT_MONTHLY_ACCOUNTANT : safeAmount(input.monthlyAccountant)
+  const dependents = Math.floor(safeAmount(input.dependents))
+
+  // Sem faturamento: não há PJ a calcular. Retorno zerado evita rbt12=0 →
+  // fator R 0/0 = NaN e divisão por zero no DAS.
+  if (monthlyRevenue <= 0) {
+    return {
+      totalAnnualNet: 0,
+      monthlyAverage: 0,
+      annex: 'V',
+      fatorR: 0,
+      proLabore: 0,
+      strategy: customProLabore !== undefined ? 'custom' : 'min-pro-labore',
+      breakdown: {
+        monthlyDas: 0,
+        effectiveRate: 0,
+        proLaboreInss: 0,
+        proLaboreIrrf: 0,
+        monthlyAccountant,
+        monthlyDistributedProfits: 0,
+      },
+    }
+  }
 
   if (customProLabore !== undefined) {
     return {
